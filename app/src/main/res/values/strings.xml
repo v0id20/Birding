@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Birding</string>
+    <string name="error_retrieving_data">Error occurred when retrieving data. Try again later</string>
 </resources>
