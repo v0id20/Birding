@@ -24,17 +24,22 @@ import java.util.ArrayList;
 public class LocationAdapter extends RecyclerView.Adapter {
 
     ArrayList<LocationViewType> locationViewTypeArrayList;
-    OnMyLocationClickListener onMyLocationClickListener;
+
+
     OnChosenLocationClickListener onChosenLocationClickListener;
-    Context context1;
+    Activity context1;
+    OnLocationClickListener onLocationClickListener;
     private FusedLocationProviderClient fusedLocationClient;
 
+    public void setOnLocationClickListener(OnLocationClickListener onLocationClickListener) {
+        this.onLocationClickListener = onLocationClickListener;
+    }
 
-    public LocationAdapter(ArrayList<LocationViewType> locationViewTypeArrayList, OnMyLocationClickListener onMyLocationClickListener, OnChosenLocationClickListener onChosenLocationClickListener) {
-        this.locationViewTypeArrayList = locationViewTypeArrayList;
-        this.onMyLocationClickListener = onMyLocationClickListener;
+    public void setOnChosenLocationClickListener(OnChosenLocationClickListener onChosenLocationClickListener) {
         this.onChosenLocationClickListener = onChosenLocationClickListener;
     }
+
+
 
     public LocationAdapter(ArrayList<LocationViewType> locationViewTypeArrayList, Activity a) {
         this.locationViewTypeArrayList = locationViewTypeArrayList;
@@ -51,53 +56,20 @@ public class LocationAdapter extends RecyclerView.Adapter {
         if (viewType == 1) {
             itemView = inflater.inflate(R.layout.item_mylocation, parent, false);
             LocationAdapter.MyLocationViewHolder viewHolder = new LocationAdapter.MyLocationViewHolder(itemView);
-            viewHolder.itemView.setOnClickListener(new OnMyLocationClickListener() {
-                @Override
-                public void onMyLocationClick() {
-                    if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//to do: enable location
-                        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context1);
-                        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-
-                            @Override
-                            public void onSuccess(Location location) {
-                                if (location != null) {
-                                    double latitude;
-                                    double longitude;
-                                    latitude = location.getLatitude();
-                                    longitude = location.getLongitude();
-                                    Intent i = new Intent(context, MainActivity.class);
-                                    i.putExtra("Latitude", latitude);
-                                    i.putExtra("Longitude", longitude);
-                                    context1.startActivity(i);
-                                }
-                            }
-                        });
-                    } else {
-                        ((ChooseLocationActivity) context1).requestLocationPermission();
-                    }
-                }
-
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onMyLocationClick();
+                    onLocationClickListener.onLocationClick();
                 }
             });
             return viewHolder;
         } else {
             itemView = inflater.inflate(R.layout.item_location, parent, false);
             LocationAdapter.ChosenLocationViewHolder viewHolder = new LocationAdapter.ChosenLocationViewHolder(itemView);
-            viewHolder.itemView.setOnClickListener(new OnChosenLocationClickListener() {
-                @Override
-                public void onChosenLocationClock() {
-                    Intent i = new Intent(context, MainActivity.class);
-                    i.putExtra(ChooseLocationActivity.REGION_CODE_EXTRA, locationViewTypeArrayList.get((int) viewHolder.getAdapterPosition()).getLocationCode());
-                    context.startActivity(i);
-                }
-
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onChosenLocationClock();
+                    onChosenLocationClickListener.onChosenLocationClick(locationViewTypeArrayList.get(viewHolder.getAdapterPosition()).getLocationCode(), locationViewTypeArrayList.get(viewHolder.getAdapterPosition()).getLocation());
                 }
             });
             return viewHolder;
@@ -148,5 +120,13 @@ public class LocationAdapter extends RecyclerView.Adapter {
             super(itemView);
             location = itemView.findViewById(R.id.item_location);
         }
+    }
+
+    interface OnLocationClickListener{
+        void onLocationClick();
+    }
+
+    interface OnChosenLocationClickListener{
+        void onChosenLocationClick(String locationCode, String countryName);
     }
 }

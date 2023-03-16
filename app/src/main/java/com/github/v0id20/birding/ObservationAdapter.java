@@ -9,10 +9,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<ObservationAdapter.ObservationViewHolder> {
     ArrayList<BirdObservation> birdObservationArrayList;
+    private ObservationPresenter observationPresenter;
+    OnObservationClickListener onObservationClickListener;
+
+    public void setOnObservationClickListener(OnObservationClickListener onObservationClickListener) {
+        this.onObservationClickListener = onObservationClickListener;
+    }
+
+
 
     public ObservationAdapter (ArrayList<BirdObservation> birdObservationArrayList) {
         this.birdObservationArrayList = birdObservationArrayList;
@@ -25,6 +35,12 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_obs, parent, false);
         ObservationAdapter.ObservationViewHolder viewHolder = new ObservationAdapter.ObservationViewHolder(itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onObservationClickListener.onClick(birdObservationArrayList.get(viewHolder.getAdapterPosition()));
+            }
+        });
         return viewHolder;
     }
 
@@ -32,7 +48,8 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
     public void onBindViewHolder(@NonNull ObservationAdapter.ObservationViewHolder holder, int position) {
         holder.commonNameTV.setText(birdObservationArrayList.get(position).getComName());
         holder.sciNameTV.setText(birdObservationArrayList.get(position).getSciName());
-        holder.locationTV.setText((birdObservationArrayList.get(position).getSubnational1Name()));
+        holder.locationTV.setText((birdObservationArrayList.get(position).getLocName()));
+        holder.dateTV.setText((birdObservationArrayList.get(position).getObsDt()));
     }
 
 
@@ -45,12 +62,17 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         TextView commonNameTV;
         TextView sciNameTV;
         TextView locationTV;
+        TextView dateTV;
         public ObservationViewHolder(@NonNull View itemView) {
             super(itemView);
             commonNameTV = itemView.findViewById(R.id.commonName);
             sciNameTV = itemView.findViewById(R.id.sciName);
             locationTV = itemView.findViewById(R.id.location);
-
+            dateTV = itemView.findViewById(R.id.obsDate);
         }
+    }
+
+    public  interface OnObservationClickListener {
+        void onClick(BirdObservation obs);
     }
 }

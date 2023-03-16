@@ -7,6 +7,16 @@ public class BirdObservation {
     private String countryName;
     private String subnational1Name;
 
+    public String getLocName() {
+        return locName;
+    }
+
+    public void setLocName(String locName) {
+        this.locName = locName;
+    }
+
+    private  String locName;
+
     public BirdObservation(String comName, String sciName, String date, String country, String location){
         this.comName = comName;
         this.sciName = sciName;
