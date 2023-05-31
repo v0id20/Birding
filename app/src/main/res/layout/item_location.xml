@@ -11,11 +11,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginLeft="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="112dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:fontFamily="sans-serif-condensed-light"
         android:textSize="18sp"
-        tools:text="France"
-        />
+        tools:text="France" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

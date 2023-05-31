@@ -27,6 +27,5 @@ public class LocationModel {
         locationList.add(new LocationViewType(2, "Turkey", "TR"));
         locationList.add(new LocationViewType(2, "USA", "US"));
         locationList.add(new LocationViewType(2, "Zambia", "ZM"));
-        locationList.add(new LocationViewType(2, "Zambia", "ZM"));
     }
 }

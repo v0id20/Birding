@@ -11,14 +11,10 @@ public class LocationViewType {
 
     public void setViewType(Integer viewType) {
         this.viewType = viewType;
-
     }
-
     public String getLocation() {
         return location;
     }
-
-
 
     public void setLocation(String location) {
         this.location = location;
@@ -38,7 +34,5 @@ public class LocationViewType {
         this.location = location;
         this.locationCode = locationCode;
     }
-
-
 
 }

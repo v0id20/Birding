@@ -1,11 +1,31 @@
 package com.github.v0id20.birding;
 
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class BirdObservation {
+    public static final String COMMON_NAME_EXTRA = "Common name";
+    public static final String SCIENTIFIC_NAME_EXTRA = "Scientific name";
+    public static final String LOCATION_NAME_EXTRA = "Location name";
+    public static final String COUNTRY_NAME_EXTRA = "Country name";
+    public static final String REGION_CODE_EXTRA = "Region Code";
+    public static final String LATITUDE_EXTRA = "Latitude";
+    public static final String LONGITUDE_EXTRA = "Longitude";
+    public static final String OBSERVATION_DATE_EXTRA = "Observation date";
     private String comName;
     private String sciName;
     private String obsDt;
+
+    private String date;
+    // private String obsTime;
     private String countryName;
     private String subnational1Name;
+    private String time;
+    private String locName;
+    private String latitude;
+    private String longitude;
 
     public String getLocName() {
         return locName;
@@ -15,9 +35,7 @@ public class BirdObservation {
         this.locName = locName;
     }
 
-    private  String locName;
-
-    public BirdObservation(String comName, String sciName, String date, String country, String location){
+    public BirdObservation(String comName, String sciName, String date, String country, String location) {
         this.comName = comName;
         this.sciName = sciName;
         obsDt = date;
@@ -65,4 +83,22 @@ public class BirdObservation {
     public void setSubnational1Name(String subnational1Name) {
         this.subnational1Name = subnational1Name;
     }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+
 }

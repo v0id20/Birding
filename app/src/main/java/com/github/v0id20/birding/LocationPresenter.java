@@ -9,7 +9,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.Settings;
-import android.view.View;
+
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -22,13 +22,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 
-public class LocationPresenter implements LocationAdapter.OnLocationClickListener, LocationAdapter.OnChosenLocationClickListener {
-    public static final String COUNTRY_NAME_EXTRA = "Country name";
-    private FusedLocationProviderClient fusedLocationClient;
+public class LocationPresenter implements LocationAdapter.OnMyLocationClickListener, LocationAdapter.OnChosenLocationClickListener {
     public static final int REQUEST_CODE = 231;
-    public static String REGION_CODE_EXTRA = "Region Code";
-    public final static String LATITUDE_EXTRA = "Latitude";
-    public final static String LONGITUDE_EXTRA = "Longitude";
+    private FusedLocationProviderClient fusedLocationClient;
 
     public Context getContext() {
         return context;
@@ -43,14 +39,14 @@ public class LocationPresenter implements LocationAdapter.OnLocationClickListene
 
     @Override
     public void onChosenLocationClick(String locationCode, String countryName) {
-        Intent i = new Intent(context, MainActivity.class);
-        i.putExtra(REGION_CODE_EXTRA, locationCode);
-        i.putExtra(COUNTRY_NAME_EXTRA, countryName);
+        Intent i = new Intent(context, ViewObservationsListActivity.class);
+        i.putExtra(BirdObservation.REGION_CODE_EXTRA, locationCode);
+        i.putExtra(BirdObservation.COUNTRY_NAME_EXTRA, countryName);
         context.startActivity(i);
     }
 
     @Override
-    public void onLocationClick() {
+    public void onMyLocationClick() {
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             if (lm.isLocationEnabled()) {
@@ -59,9 +55,9 @@ public class LocationPresenter implements LocationAdapter.OnLocationClickListene
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            Intent i = new Intent(context, MainActivity.class);
-                            i.putExtra(LATITUDE_EXTRA, location.getLatitude());
-                            i.putExtra(LONGITUDE_EXTRA, location.getLongitude());
+                            Intent i = new Intent(context, ViewObservationsListActivity.class);
+                            i.putExtra(BirdObservation.LATITUDE_EXTRA, location.getLatitude());
+                            i.putExtra(BirdObservation.LONGITUDE_EXTRA, location.getLongitude());
                             context.startActivity(i);
                         } else {
                             System.out.println("Location is null");
@@ -102,7 +98,7 @@ public class LocationPresenter implements LocationAdapter.OnLocationClickListene
                                 double longitude;
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
-                                Intent i = new Intent(context, MainActivity.class);
+                                Intent i = new Intent(context, ViewObservationsListActivity.class);
                                 i.putExtra("Latitude", latitude);
                                 i.putExtra("Longitude", longitude);
                                 context.startActivity(i);
@@ -136,10 +132,9 @@ public class LocationPresenter implements LocationAdapter.OnLocationClickListene
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
 
-                ConstraintLayout cl = ((Activity)context).findViewById(R.id.constraint_layout);
+                ConstraintLayout cl = ((Activity) context).findViewById(R.id.constraint_layout);
                 //move to view
-                Snackbar snackbar = Snackbar
-                        .make(cl, R.string.error_cant_retrieve_obs_without_location_on, 5000);
+                Snackbar snackbar = Snackbar.make(cl, R.string.error_cant_retrieve_obs_without_location_on, 5000);
                 snackbar.show();
             }
         });

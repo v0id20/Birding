@@ -23,16 +23,15 @@ import java.util.ArrayList;
 
 public class LocationAdapter extends RecyclerView.Adapter {
 
-    ArrayList<LocationViewType> locationViewTypeArrayList;
+    private ArrayList<LocationViewType> locationViewTypeArrayList;
 
 
-    OnChosenLocationClickListener onChosenLocationClickListener;
-    Activity context1;
-    OnLocationClickListener onLocationClickListener;
+    private OnChosenLocationClickListener onChosenLocationClickListener;
+    private OnMyLocationClickListener onMyLocationClickListener;
     private FusedLocationProviderClient fusedLocationClient;
 
-    public void setOnLocationClickListener(OnLocationClickListener onLocationClickListener) {
-        this.onLocationClickListener = onLocationClickListener;
+    public void setOnMyLocationClickListener(OnMyLocationClickListener onMyLocationClickListener) {
+        this.onMyLocationClickListener = onMyLocationClickListener;
     }
 
     public void setOnChosenLocationClickListener(OnChosenLocationClickListener onChosenLocationClickListener) {
@@ -40,10 +39,8 @@ public class LocationAdapter extends RecyclerView.Adapter {
     }
 
 
-
-    public LocationAdapter(ArrayList<LocationViewType> locationViewTypeArrayList, Activity a) {
+    public LocationAdapter(ArrayList<LocationViewType> locationViewTypeArrayList) {
         this.locationViewTypeArrayList = locationViewTypeArrayList;
-        this.context1 = a;
     }
 
 
@@ -59,7 +56,7 @@ public class LocationAdapter extends RecyclerView.Adapter {
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onLocationClickListener.onLocationClick();
+                    onMyLocationClickListener.onMyLocationClick();
                 }
             });
             return viewHolder;
@@ -74,12 +71,11 @@ public class LocationAdapter extends RecyclerView.Adapter {
             });
             return viewHolder;
         }
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (locationViewTypeArrayList.get(position).getViewType() == 1) {
+        if (holder.getItemViewType() == 1) {
             ((LocationAdapter.MyLocationViewHolder) holder).myLocation.setText(locationViewTypeArrayList.get(position).getLocation());
             ((MyLocationViewHolder) holder).myLocationIcon.setImageResource(R.drawable.ic_my_location);
         } else {
@@ -93,8 +89,9 @@ public class LocationAdapter extends RecyclerView.Adapter {
         return locationViewTypeArrayList.size();
     }
 
+
     public int getItemViewType(int position) {
-        if (locationViewTypeArrayList.get(position).getViewType() == 1) {
+        if (position == 0) {
             return 1;
         } else {
             return 2;
@@ -122,11 +119,11 @@ public class LocationAdapter extends RecyclerView.Adapter {
         }
     }
 
-    interface OnLocationClickListener{
-        void onLocationClick();
+    interface OnMyLocationClickListener {
+        void onMyLocationClick();
     }
 
-    interface OnChosenLocationClickListener{
+    interface OnChosenLocationClickListener {
         void onChosenLocationClick(String locationCode, String countryName);
     }
 }

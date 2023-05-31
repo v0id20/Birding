@@ -3,4 +3,5 @@
     <string name="recent_obs">Recent observations</string>
     <string name="error_retrieving_data">Error occurred when retrieving data. Try again later</string>
     <string name="error_cant_retrieve_obs_without_location_on">Can not retrieve observation at your location without location services enabled</string>
+    <string name="nearby">nearby</string>
 </resources>
