@@ -20,8 +20,6 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         this.onObservationClickListener = onObservationClickListener;
     }
 
-
-
     public ObservationAdapter (ArrayList<BirdObservation> birdObservationArrayList) {
         this.birdObservationArrayList = birdObservationArrayList;
     }
@@ -43,9 +41,9 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
 
     @Override
     public void onBindViewHolder(@NonNull ObservationAdapter.ObservationViewHolder holder, int position) {
-        holder.commonNameTV.setText(birdObservationArrayList.get(position).getComName());
-        holder.sciNameTV.setText(birdObservationArrayList.get(position).getSciName());
-        holder.locationTV.setText((birdObservationArrayList.get(position).getLocName()));
+        holder.commonNameTV.setText(birdObservationArrayList.get(position).getCommonName());
+        holder.sciNameTV.setText(birdObservationArrayList.get(position).getScientificName());
+        holder.locationTV.setText((birdObservationArrayList.get(position).getLocationName()));
         holder.dateTV.setText((birdObservationArrayList.get(position).getDate()));
     }
 

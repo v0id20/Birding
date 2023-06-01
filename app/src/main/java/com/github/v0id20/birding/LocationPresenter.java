@@ -99,8 +99,8 @@ public class LocationPresenter implements LocationAdapter.OnMyLocationClickListe
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                                 Intent i = new Intent(context, ViewObservationsListActivity.class);
-                                i.putExtra("Latitude", latitude);
-                                i.putExtra("Longitude", longitude);
+                                i.putExtra(BirdObservation.LATITUDE_EXTRA, latitude);
+                                i.putExtra(BirdObservation.LONGITUDE_EXTRA, longitude);
                                 context.startActivity(i);
                             }
                         }

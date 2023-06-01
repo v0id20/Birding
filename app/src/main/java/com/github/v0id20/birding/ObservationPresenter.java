@@ -16,13 +16,13 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
     @Override
     public void onBirdObservationClick(BirdObservation obs) {
         Intent i = new Intent(context, ViewBirdObservationActivity.class);
-        i.putExtra(BirdObservation.COMMON_NAME_EXTRA, obs.getComName());
-        i.putExtra(BirdObservation.SCIENTIFIC_NAME_EXTRA, obs.getSciName());
+        i.putExtra(BirdObservation.COMMON_NAME_EXTRA, obs.getCommonName());
+        i.putExtra(BirdObservation.SCIENTIFIC_NAME_EXTRA, obs.getScientificName());
         i.putExtra(BirdObservation.COUNTRY_NAME_EXTRA, obs.getCountryName());
-        i.putExtra(BirdObservation.LOCATION_NAME_EXTRA, obs.getLocName());
+        i.putExtra(BirdObservation.LOCATION_NAME_EXTRA, obs.getLocationName());
         i.putExtra(BirdObservation.LATITUDE_EXTRA, obs.getLatitude());
         i.putExtra(BirdObservation.LONGITUDE_EXTRA, obs.getLongitude());
-        i.putExtra(BirdObservation.OBSERVATION_DATE_EXTRA, obs.getObsDt());
+        i.putExtra(BirdObservation.OBSERVATION_DATE_EXTRA, obs.getDate());
         ((AppCompatActivity) context).startActivity(i);
     }
 

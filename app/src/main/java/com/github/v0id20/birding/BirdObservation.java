@@ -1,6 +1,5 @@
 package com.github.v0id20.birding;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,58 +13,65 @@ public class BirdObservation {
     public static final String LATITUDE_EXTRA = "Latitude";
     public static final String LONGITUDE_EXTRA = "Longitude";
     public static final String OBSERVATION_DATE_EXTRA = "Observation date";
-    private String comName;
-    private String sciName;
-    private String obsDt;
-
-    private String date;
-    // private String obsTime;
+    private String commonName;
+    private String scientificName;
     private String countryName;
+    private String locationName;
     private String subnational1Name;
+    private String date;
     private String time;
-    private String locName;
     private String latitude;
     private String longitude;
 
-    public String getLocName() {
-        return locName;
+    public BirdObservation() {
     }
 
-    public void setLocName(String locName) {
-        this.locName = locName;
-    }
-
-    public BirdObservation(String comName, String sciName, String date, String country, String location) {
-        this.comName = comName;
-        this.sciName = sciName;
-        obsDt = date;
+    public BirdObservation(String commonName, String scientificName, String date, String country, String location) {
+        this.commonName = commonName;
+        this.scientificName = scientificName;
+        this.date = date;
         this.countryName = country;
         this.subnational1Name = location;
     }
 
-
-    public String getComName() {
-        return comName;
+    public String getDate() {
+        return date;
     }
 
-    public void setComName(String comName) {
-        this.comName = comName;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public String getSciName() {
-        return sciName;
+    public String getTime() {
+        return time;
     }
 
-    public void setSciName(String sciName) {
-        this.sciName = sciName;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public String getObsDt() {
-        return obsDt;
+    public String getLocationName() {
+        return locationName;
     }
 
-    public void setObsDt(String obsDt) {
-        this.obsDt = obsDt;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public String getScientificName() {
+        return scientificName;
+    }
+
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
     }
 
     public String getCountryName() {
@@ -79,23 +85,18 @@ public class BirdObservation {
     public String getSubnational1Name() {
         return subnational1Name;
     }
-
     public void setSubnational1Name(String subnational1Name) {
         this.subnational1Name = subnational1Name;
     }
-
     public String getLatitude() {
         return latitude;
     }
-
     public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
-
     public String getLongitude() {
         return longitude;
     }
-
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
