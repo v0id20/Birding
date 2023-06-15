@@ -1,18 +1,14 @@
 package com.github.v0id20.birding;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.provider.Settings;
 
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -20,22 +16,26 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
 
 public class LocationPresenter implements LocationAdapter.OnMyLocationClickListener, LocationAdapter.OnChosenLocationClickListener {
     public static final int REQUEST_CODE = 231;
     private FusedLocationProviderClient fusedLocationClient;
+    private final Context context;
+    private LocationModel locationModel;
 
-    public Context getContext() {
-        return context;
-    }
-
-    public void setContext(Context context) {
+    public LocationPresenter(Context context) {
+        super();
         this.context = context;
+        locationModel = new LocationModel();
     }
 
-    private Context context;
-    private ChooseLocationActivity view;
+    public void onCreatePresenter() {
+        if (locationModel != null) {
+            ((ChooseLocationActivity) context).showLocationsList(locationModel.getLocationList());
+        }
+    }
+
+    ;
 
     @Override
     public void onChosenLocationClick(String locationCode, String countryName) {
@@ -71,7 +71,7 @@ public class LocationPresenter implements LocationAdapter.OnMyLocationClickListe
                 });
             } else {
                 //ask user to enable location
-                showDialog();
+                ((ChooseLocationActivity) context).showDialog();
             }
         } else {
             requestLocationPermission();
@@ -114,30 +114,5 @@ public class LocationPresenter implements LocationAdapter.OnMyLocationClickListe
         }
     }
 
-    private void showDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
-// Setting Dialog Title
-        alertDialog.setTitle("GPS settings");
-// Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
-// On pressing Settings button
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                context.startActivity(intent);
-            }
-        });
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-
-                ConstraintLayout cl = ((Activity) context).findViewById(R.id.constraint_layout);
-                //move to view
-                Snackbar snackbar = Snackbar.make(cl, R.string.error_cant_retrieve_obs_without_location_on, 5000);
-                snackbar.show();
-            }
-        });
-        alertDialog.show();
-    }
 }

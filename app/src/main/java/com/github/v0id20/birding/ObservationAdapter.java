@@ -13,12 +13,12 @@ import java.util.ArrayList;
 
 public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<ObservationAdapter.ObservationViewHolder> {
     ArrayList<BirdObservation> birdObservationArrayList;
-    private ObservationPresenter observationPresenter;
     OnObservationClickListener onObservationClickListener;
 
     public void setOnObservationClickListener(OnObservationClickListener onObservationClickListener) {
         this.onObservationClickListener = onObservationClickListener;
     }
+
 
     public ObservationAdapter (ArrayList<BirdObservation> birdObservationArrayList) {
         this.birdObservationArrayList = birdObservationArrayList;

@@ -1,6 +1,6 @@
 package com.github.v0id20.birding;
 
-import androidx.recyclerview.widget.RecyclerView;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,39 +15,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ObservationModel {
+public class ViewObservationsListModel {
     public static final String BASE_URL = "https://api.ebird.org/";
     public static final String apiKey = "k5529ocdk9i0";
-    private String scientificName;
     ArrayList<BirdObservationDTO> apiResponse;
     ArrayList<BirdObservation> birdObservationsData;
-    private String commonName;
-    private String regionCode;
-    private double latitude;
-    private double longitude;
-    private ObservationAdapter observationAdapter;
 
-    public void setObservationPresenter(ObservationPresenter observationPresenter) {
-        this.observationPresenter = observationPresenter;
+    public ViewObservationsListModel() {
     }
-
-    private ObservationPresenter observationPresenter;
-
-    public ObservationModel(String commonName, String scientificName, String regionCode, double latitude, double longitude) {
-        this.commonName = commonName;
-        this.scientificName = scientificName;
-        this.regionCode = regionCode;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    public ObservationModel(String regionCode, double latitude, double longitude, ObservationAdapter observationAdapter) {
-        this.regionCode = regionCode;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.observationAdapter = observationAdapter;
-    }
-
 
     OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
     Retrofit retrofit = new Retrofit.Builder()
@@ -57,32 +32,41 @@ public class ObservationModel {
             .build();
     MyApiEndpointInterface myApi = retrofit.create(MyApiEndpointInterface.class);
 
-    public void getData(RecyclerView recyclerView) {
-        if (regionCode != null) {
-            Call<ArrayList<BirdObservationDTO>> callSync = myApi.getObservations(regionCode, apiKey);
-            sendQuery(callSync, recyclerView);
-        } else if (latitude != -1 && longitude != -1) {
-            Call<ArrayList<BirdObservationDTO>> callSync = myApi.getNearbyObservations(latitude, longitude, apiKey);
-            sendQuery(callSync, recyclerView);
+    public void getData(ViewObservationsListModel.onApiResponseReceived onApiResponseReceived, String regionCode, double latitude, double longitude, String type) {
+        Call<ArrayList<BirdObservationDTO>> callSync = null;
+        if (type == ViewObservationsListActivity.OBSERVATIONS_TYPE_RECENT) {
+            if (regionCode != null) {
+                callSync = myApi.getObservations(regionCode, apiKey);
+            } else if (latitude != -1 && longitude != -1) {
+                callSync = myApi.getNearbyObservations(latitude, longitude, apiKey);
+            }
+        } else if (type == ViewObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE) {
+            if (regionCode != null) {
+                callSync = myApi.getNotableObservations(regionCode, apiKey);
+            } else if (latitude != -1 && longitude != -1) {
+                callSync = myApi.getNearbyNotableObservations(latitude, longitude, apiKey);
+            }
+        }
+        if (callSync != null) {
+            sendQuery(callSync, type, onApiResponseReceived);
         }
     }
 
-    public void sendQuery(Call<ArrayList<BirdObservationDTO>> callSync, RecyclerView recyclerView) {
+    private void sendQuery(Call<ArrayList<BirdObservationDTO>> callSync, String type, ViewObservationsListModel.onApiResponseReceived onApiResponseReceived) {
+
         callSync.enqueue(new Callback<ArrayList<BirdObservationDTO>>() {
             @Override
             public void onResponse(Call<ArrayList<BirdObservationDTO>> call, Response<ArrayList<BirdObservationDTO>> response) {
                 int statusCode = response.code();
                 apiResponse = response.body();
                 birdObservationsData = mapBirdObservations(apiResponse);
-                observationAdapter.updateData(birdObservationsData);
-                recyclerView.setAdapter(observationAdapter);
-                observationPresenter.onContentLoaded();
+                onApiResponseReceived.onApiResponseReceived(birdObservationsData);
             }
 
             @Override
             public void onFailure(Call<ArrayList<BirdObservationDTO>> call, Throwable t) {
                 // Log error here since request failed
-                observationPresenter.onContentLoaded();
+                onApiResponseReceived.onApiResponseReceived(birdObservationsData);
                 System.out.println("Error");
             }
         });
@@ -106,7 +90,7 @@ public class ObservationModel {
         String time = null;
         Date inputDate = null;
         BirdObservation birdObservation = new BirdObservation();
-        String inputDatePattern = "yyyy-mm-dd hh:mm";
+        String inputDatePattern = "yyyy-MM-dd hh:mm";
         String outputDatePattern = "dd-MMM-yy";
         String outputTimePattern = "hh:mm";
         SimpleDateFormat inputDateFormatter = new SimpleDateFormat(inputDatePattern);
@@ -131,4 +115,7 @@ public class ObservationModel {
         return birdObservation;
     }
 
+    public interface onApiResponseReceived {
+        void onApiResponseReceived(ArrayList<BirdObservation> apiResponse);
+    }
 }

@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
 
@@ -46,12 +46,20 @@
         android:id="@+id/location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="12dp"
         android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintLeft_toRightOf="@id/barrier2"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/sciName"
         app:layout_constraintTop_toBottomOf="@id/commonName"
+        android:textAlignment="textEnd"
         tools:text="Sheffield but actually ot is a very long name so that it does not fit here" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="commonName,sciName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -18,6 +17,12 @@ public interface MyApiEndpointInterface {
 
     @GET("/v2/data/obs/geo/recent?")
     Call<ArrayList<BirdObservationDTO>> getNearbyObservations(@Query("lat") double latitude, @Query("lng") double longitude, @Header("X-eBirdApiToken") String authorization);
+
+    @GET("/v2/data/obs/{regionCode}/recent/notable?detail=full")
+    Call<ArrayList<BirdObservationDTO>> getNotableObservations(@Path("regionCode") String resionCode, @Header("X-eBirdApiToken") String authorization);
+
+    @GET("/v2/data/obs/geo/recent/notable?")
+    Call<ArrayList<BirdObservationDTO>> getNearbyNotableObservations(@Query("lat") double latitude, @Query("lng") double longitude, @Header("X-eBirdApiToken") String authorization);
 
 }
 

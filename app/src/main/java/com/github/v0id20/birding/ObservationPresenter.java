@@ -1,32 +1,36 @@
 package com.github.v0id20.birding;
 
-import android.content.Context;
-import android.content.Intent;
 
-import androidx.appcompat.app.AppCompatActivity;
 
-public class ObservationPresenter implements ObservationAdapter.OnObservationClickListener {
-    private Context context;
+import java.util.ArrayList;
 
-    public ObservationPresenter(Context context) {
-        this.context = context;
+public class ObservationPresenter implements ObservationAdapter.OnObservationClickListener, ViewObservationsListModel.onApiResponseReceived {
+
+    private ViewObservationsListModel viewObservationsListModel;
+    private IDisplayData displayDataObject;
+
+    public ObservationPresenter(IDisplayData displayDataObject) {
+        super();
+        viewObservationsListModel = new ViewObservationsListModel();
+        this.displayDataObject = displayDataObject;
     }
 
+    public void getData(ViewObservationsListModel.onApiResponseReceived presenterInstance, String regionCode, double latitude, double longitude, String type) {
+        viewObservationsListModel.getData(presenterInstance, regionCode, latitude, longitude, type);
+    }
+
+    public void updateContents(IDisplayData fragment, ArrayList<BirdObservation> arrayList) {
+        fragment.displayData(arrayList);
+
+    }
 
     @Override
     public void onBirdObservationClick(BirdObservation obs) {
-        Intent i = new Intent(context, ViewBirdObservationActivity.class);
-        i.putExtra(BirdObservation.COMMON_NAME_EXTRA, obs.getCommonName());
-        i.putExtra(BirdObservation.SCIENTIFIC_NAME_EXTRA, obs.getScientificName());
-        i.putExtra(BirdObservation.COUNTRY_NAME_EXTRA, obs.getCountryName());
-        i.putExtra(BirdObservation.LOCATION_NAME_EXTRA, obs.getLocationName());
-        i.putExtra(BirdObservation.LATITUDE_EXTRA, obs.getLatitude());
-        i.putExtra(BirdObservation.LONGITUDE_EXTRA, obs.getLongitude());
-        i.putExtra(BirdObservation.OBSERVATION_DATE_EXTRA, obs.getDate());
-        ((AppCompatActivity) context).startActivity(i);
+        displayDataObject.onItemClick(obs);
     }
 
-    public void onContentLoaded() {
-        ((ViewObservationsListActivity) context).setLoaderGone();
+    @Override
+    public void onApiResponseReceived(ArrayList<BirdObservation> arrayList) {
+        updateContents(displayDataObject, arrayList);
     }
 }

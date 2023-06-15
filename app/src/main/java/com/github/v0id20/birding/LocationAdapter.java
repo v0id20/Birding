@@ -1,10 +1,9 @@
 package com.github.v0id20.birding;
 
-import android.app.Activity;
+
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
+import android.content.res.TypedArray;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
@@ -25,10 +21,8 @@ public class LocationAdapter extends RecyclerView.Adapter {
 
     private ArrayList<LocationViewType> locationViewTypeArrayList;
 
-
     private OnChosenLocationClickListener onChosenLocationClickListener;
     private OnMyLocationClickListener onMyLocationClickListener;
-    private FusedLocationProviderClient fusedLocationClient;
 
     public void setOnMyLocationClickListener(OnMyLocationClickListener onMyLocationClickListener) {
         this.onMyLocationClickListener = onMyLocationClickListener;
@@ -38,11 +32,13 @@ public class LocationAdapter extends RecyclerView.Adapter {
         this.onChosenLocationClickListener = onChosenLocationClickListener;
     }
 
+    public LocationAdapter() {
 
-    public LocationAdapter(ArrayList<LocationViewType> locationViewTypeArrayList) {
-        this.locationViewTypeArrayList = locationViewTypeArrayList;
     }
 
+    public void setLocationViewTypeArrayList(ArrayList<LocationViewType> locationViewTypeArrayList) {
+        this.locationViewTypeArrayList = locationViewTypeArrayList;
+    }
 
     @NonNull
     @Override
@@ -50,6 +46,11 @@ public class LocationAdapter extends RecyclerView.Adapter {
         View itemView;
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
+        int[] attrs = new int[]{androidx.constraintlayout.widget.R.attr.selectableItemBackground};
+        TypedArray typedArray = context.obtainStyledAttributes(attrs);
+        int backgroundResource = typedArray.getResourceId(0, 0);
+        //
+
         if (viewType == 1) {
             itemView = inflater.inflate(R.layout.item_mylocation, parent, false);
             LocationAdapter.MyLocationViewHolder viewHolder = new LocationAdapter.MyLocationViewHolder(itemView);
@@ -59,6 +60,7 @@ public class LocationAdapter extends RecyclerView.Adapter {
                     onMyLocationClickListener.onMyLocationClick();
                 }
             });
+            itemView.setBackgroundResource(backgroundResource);
             return viewHolder;
         } else {
             itemView = inflater.inflate(R.layout.item_location, parent, false);
@@ -69,9 +71,11 @@ public class LocationAdapter extends RecyclerView.Adapter {
                     onChosenLocationClickListener.onChosenLocationClick(locationViewTypeArrayList.get(viewHolder.getAdapterPosition()).getLocationCode(), locationViewTypeArrayList.get(viewHolder.getAdapterPosition()).getLocation());
                 }
             });
+            itemView.setBackgroundResource(backgroundResource);
             return viewHolder;
         }
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
