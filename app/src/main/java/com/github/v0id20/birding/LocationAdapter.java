@@ -1,9 +1,7 @@
 package com.github.v0id20.birding;
 
-
 import android.content.Context;
 import android.content.res.TypedArray;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
 
 import java.util.ArrayList;
 
@@ -86,7 +82,6 @@ public class LocationAdapter extends RecyclerView.Adapter {
             ((LocationAdapter.ChosenLocationViewHolder) holder).location.setText(locationViewTypeArrayList.get(position).getLocation());
         }
     }
-
 
     @Override
     public int getItemCount() {

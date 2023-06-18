@@ -1,6 +1,5 @@
 package com.github.v0id20.birding;
 
-
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;

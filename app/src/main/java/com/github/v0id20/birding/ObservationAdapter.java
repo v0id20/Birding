@@ -50,7 +50,11 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
 
     @Override
     public int getItemCount() {
-        return birdObservationArrayList.size();
+        if (birdObservationArrayList != null) {
+            return birdObservationArrayList.size();
+        } else {
+            return 0;
+        }
     }
 
     public class ObservationViewHolder extends RecyclerView.ViewHolder {

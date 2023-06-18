@@ -1,7 +1,5 @@
 package com.github.v0id20.birding;
 
-
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,13 +32,13 @@ public class ViewObservationsListModel {
 
     public void getData(ViewObservationsListModel.onApiResponseReceived onApiResponseReceived, String regionCode, double latitude, double longitude, String type) {
         Call<ArrayList<BirdObservationDTO>> callSync = null;
-        if (type == ViewObservationsListActivity.OBSERVATIONS_TYPE_RECENT) {
+        if (type.equals(ViewObservationsListActivity.OBSERVATIONS_TYPE_RECENT)) {
             if (regionCode != null) {
                 callSync = myApi.getObservations(regionCode, apiKey);
             } else if (latitude != -1 && longitude != -1) {
                 callSync = myApi.getNearbyObservations(latitude, longitude, apiKey);
             }
-        } else if (type == ViewObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE) {
+        } else if (type.equals(ViewObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE)) {
             if (regionCode != null) {
                 callSync = myApi.getNotableObservations(regionCode, apiKey);
             } else if (latitude != -1 && longitude != -1) {
@@ -48,11 +46,11 @@ public class ViewObservationsListModel {
             }
         }
         if (callSync != null) {
-            sendQuery(callSync, type, onApiResponseReceived);
+            sendQuery(callSync, onApiResponseReceived);
         }
     }
 
-    private void sendQuery(Call<ArrayList<BirdObservationDTO>> callSync, String type, ViewObservationsListModel.onApiResponseReceived onApiResponseReceived) {
+    private void sendQuery(Call<ArrayList<BirdObservationDTO>> callSync, ViewObservationsListModel.onApiResponseReceived onApiResponseReceived) {
 
         callSync.enqueue(new Callback<ArrayList<BirdObservationDTO>>() {
             @Override
@@ -67,6 +65,7 @@ public class ViewObservationsListModel {
             public void onFailure(Call<ArrayList<BirdObservationDTO>> call, Throwable t) {
                 // Log error here since request failed
                 onApiResponseReceived.onApiResponseReceived(birdObservationsData);
+
                 System.out.println("Error");
             }
         });

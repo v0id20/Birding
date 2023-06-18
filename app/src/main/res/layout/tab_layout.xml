@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/recent_obs_tab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:onClick="onClick"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/recent_obs_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:paddingEnd="36dp"
+            android:paddingStart="36dp"
+            android:text="Recent"
+            android:textAlignment="center"
+            android:textColor="#FFFF"
+            android:textStyle="bold"
+            android:background="@drawable/oval_cyan" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/notable_obs_tab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:onClick="onClick"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/notable_obs_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:paddingEnd="36dp"
+            android:paddingStart="36dp"
+            android:text="Notable"
+            android:textAlignment="center"
+            android:textColor="@color/yellow_500"
+            android:textStyle="bold"
+            android:background="@drawable/oval_white_10" />
+    </LinearLayout>
+
+
+</LinearLayout>

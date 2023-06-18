@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -35,7 +34,6 @@ public class LocationPresenter implements LocationAdapter.OnMyLocationClickListe
         }
     }
 
-    ;
 
     @Override
     public void onChosenLocationClick(String locationCode, String countryName) {

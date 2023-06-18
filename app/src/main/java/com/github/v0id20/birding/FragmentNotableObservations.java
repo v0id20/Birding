@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import java.util.ArrayList;
 
 public class FragmentNotableObservations extends Fragment implements IDisplayData {
@@ -45,17 +46,27 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);
         double currentLongitude = getArguments().getDouble(BirdObservation.LONGITUDE_EXTRA);
         if (regionCode != null) {
-            header.setText(getString(R.string.recent_obs) + getString(R.string.in) + countryName);
+            header.setText(getString(R.string.recent_notable_obs) + getString(R.string.in) + countryName);
         } else if (currentLatitude != -1 && currentLongitude != -1) {
-            header.setText(getString(R.string.recent_obs) + getString(R.string.nearby));
+            header.setText(getString(R.string.recent_notable_obs) + getString(R.string.nearby));
         }
         observationPresenter.getData(observationPresenter, regionCode, currentLatitude, currentLongitude, observationsType);
 
     }
 
+    public void updateLists(ArrayList<BirdObservation> birdObservationsData) {
+        observationAdapter.updateData(birdObservationsData);
+        recyclerView.setAdapter(observationAdapter);
+    }
+
+    public void hideLoader() {
+        loader.setVisibility(View.GONE);
+    }
+
     @Override
     public void displayData(ArrayList<BirdObservation> arrayList) {
-
+        hideLoader();
+        updateLists(arrayList);
     }
 
     @Override

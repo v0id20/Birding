@@ -1,6 +1,5 @@
 package com.github.v0id20.birding;
 
-
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -10,7 +9,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MyApiEndpointInterface {
-    // Request method and URL specified in the annotation
 
     @GET("/v2/data/obs/{regionCode}/recent")
     Call<ArrayList<BirdObservationDTO>> getObservations(@Path("regionCode") String regionCode, @Header("X-eBirdApiToken") String authorization);

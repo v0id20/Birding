@@ -1,10 +1,6 @@
 package com.github.v0id20.birding;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class BirdObservation {
+public class BirdObservation extends BirdObservationItem {
     public static final String COMMON_NAME_EXTRA = "Common name";
     public static final String SCIENTIFIC_NAME_EXTRA = "Scientific name";
     public static final String LOCATION_NAME_EXTRA = "Location name";
@@ -18,7 +14,6 @@ public class BirdObservation {
     private String countryName;
     private String locationName;
     private String subnational1Name;
-    private String date;
     private String time;
     private String latitude;
     private String longitude;
@@ -26,20 +21,13 @@ public class BirdObservation {
     public BirdObservation() {
     }
 
-    public BirdObservation(String commonName, String scientificName, String date, String country, String location) {
-        this.commonName = commonName;
-        this.scientificName = scientificName;
-        this.date = date;
-        this.countryName = country;
-        this.subnational1Name = location;
-    }
 
     public String getDate() {
-        return date;
+        return observationDate;
     }
 
     public void setDate(String date) {
-        this.date = date;
+        observationDate = date;
     }
 
     public String getTime() {

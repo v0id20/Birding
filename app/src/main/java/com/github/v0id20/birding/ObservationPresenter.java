@@ -1,7 +1,5 @@
 package com.github.v0id20.birding;
 
-
-
 import java.util.ArrayList;
 
 public class ObservationPresenter implements ObservationAdapter.OnObservationClickListener, ViewObservationsListModel.onApiResponseReceived {

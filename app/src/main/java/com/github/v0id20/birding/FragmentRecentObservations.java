@@ -2,6 +2,7 @@ package com.github.v0id20.birding;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,7 +42,6 @@ public class FragmentRecentObservations extends Fragment implements IDisplayData
         observationAdapter = new ObservationAdapter(new ArrayList<>());
         observationPresenter = new ObservationPresenter(FragmentRecentObservations.this);
         observationAdapter.setOnObservationClickListener(observationPresenter);
-
 
         loader = view.findViewById(R.id.loadingPanel);
         loader.setVisibility(View.VISIBLE);
@@ -92,5 +86,24 @@ public class FragmentRecentObservations extends Fragment implements IDisplayData
         i.putExtra(BirdObservation.LONGITUDE_EXTRA, birdObservation.getLongitude());
         i.putExtra(BirdObservation.OBSERVATION_DATE_EXTRA, birdObservation.getDate());
         this.startActivity(i);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("kek", "eto destroyy view nahui");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("kek", "eto destroyy nahui");
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("kek", "eto resume nahui");
     }
 }
