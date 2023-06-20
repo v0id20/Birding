@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -25,10 +26,13 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         String regionCode = i.getStringExtra(BirdObservation.REGION_CODE_EXTRA);
         double currentLatitude = i.getDoubleExtra(BirdObservation.LATITUDE_EXTRA, -1);
         double currentLongitude = i.getDoubleExtra(BirdObservation.LONGITUDE_EXTRA, -1);
-
+        TextView header = findViewById(R.id.header);
         String countryName = null;
         if (regionCode != null) {
             countryName = i.getStringExtra(BirdObservation.COUNTRY_NAME_EXTRA);
+            header.setText(countryName);
+        } else if (currentLatitude != -1 && currentLongitude != -1) {
+            header.setText(getString(R.string.nearby));
         }
         Bundle locationData = new Bundle();
         locationData.putString(BirdObservation.REGION_CODE_EXTRA, regionCode);

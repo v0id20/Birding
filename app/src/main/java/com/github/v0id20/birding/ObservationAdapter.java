@@ -11,42 +11,57 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<ObservationAdapter.ObservationViewHolder> {
-    ArrayList<BirdObservation> birdObservationArrayList;
+public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    ArrayList<BirdObservationItem> birdObservationArrayList;
     OnObservationClickListener onObservationClickListener;
+
+    public ObservationAdapter(ArrayList<BirdObservationItem> birdObservationArrayList) {
+        this.birdObservationArrayList = birdObservationArrayList;
+    }
 
     public void setOnObservationClickListener(OnObservationClickListener onObservationClickListener) {
         this.onObservationClickListener = onObservationClickListener;
     }
 
-
-    public ObservationAdapter (ArrayList<BirdObservation> birdObservationArrayList) {
-        this.birdObservationArrayList = birdObservationArrayList;
-    }
     @NonNull
     @Override
-    public ObservationAdapter.ObservationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View itemView = inflater.inflate(R.layout.item_obs, parent, false);
-        ObservationAdapter.ObservationViewHolder viewHolder = new ObservationAdapter.ObservationViewHolder(itemView);
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onObservationClickListener.onBirdObservationClick(birdObservationArrayList.get(viewHolder.getAdapterPosition()));
-            }
-        });
-        return viewHolder;
+        View itemView;
+        if (viewType == 1) {
+            itemView = inflater.inflate(R.layout.item_obs, parent, false);
+
+            ObservationAdapter.ObservationViewHolder viewHolder = new ObservationAdapter.ObservationViewHolder(itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    BirdObservation birdObservation = (BirdObservation) birdObservationArrayList.get(viewHolder.getAdapterPosition());
+                    onObservationClickListener.onBirdObservationClick(birdObservation);
+                }
+            });
+            return viewHolder;
+        } else if (viewType == 2) {
+            itemView = inflater.inflate(R.layout.item_obs_date, parent, false);
+            return new ObservationAdapter.DateObservationViewHolder(itemView);
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ObservationAdapter.ObservationViewHolder holder, int position) {
-        holder.commonNameTV.setText(birdObservationArrayList.get(position).getCommonName());
-        holder.sciNameTV.setText(birdObservationArrayList.get(position).getScientificName());
-        holder.locationTV.setText((birdObservationArrayList.get(position).getLocationName()));
-        holder.dateTV.setText((birdObservationArrayList.get(position).getDate()));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder.getItemViewType() == 1) {
+            BirdObservation birdObservationItem = (BirdObservation) birdObservationArrayList.get(position);
+            ((ObservationAdapter.ObservationViewHolder) holder).timeTV.setText(birdObservationItem.getTime());
+            ((ObservationAdapter.ObservationViewHolder) holder).commonNameTV.setText(birdObservationItem.getCommonName());
+            ((ObservationAdapter.ObservationViewHolder) holder).sciNameTV.setText(birdObservationItem.getScientificName());
+            ((ObservationAdapter.ObservationViewHolder) holder).locationTV.setText(birdObservationItem.getLocationName());
+        } else if (holder.getItemViewType() == 2) {
+            BirdObservationDate birdObservationItem = (BirdObservationDate) birdObservationArrayList.get(position);
+            ((DateObservationViewHolder) holder).dateTV.setText(birdObservationItem.getObservationDate());
+        }
     }
-
 
     @Override
     public int getItemCount() {
@@ -57,28 +72,50 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+
+        if (birdObservationArrayList.get(position) instanceof BirdObservation) {
+            return 1;
+        } else if (birdObservationArrayList.get(position) instanceof BirdObservationDate) {
+            return 2;
+        }
+        return super.getItemViewType(position);
+    }
+
     public class ObservationViewHolder extends RecyclerView.ViewHolder {
         TextView commonNameTV;
         TextView sciNameTV;
         TextView locationTV;
-        TextView dateTV;
+        TextView timeTV;
 
         public ObservationViewHolder(@NonNull View itemView) {
             super(itemView);
+            timeTV = itemView.findViewById(R.id.obs_time);
             commonNameTV = itemView.findViewById(R.id.commonName);
             sciNameTV = itemView.findViewById(R.id.sciName);
             locationTV = itemView.findViewById(R.id.location);
-            dateTV = itemView.findViewById(R.id.obsDate);
         }
     }
 
-    public void updateData(ArrayList<BirdObservation> newObservationList) {
+    public class DateObservationViewHolder extends RecyclerView.ViewHolder {
+        TextView dateTV;
+
+        public DateObservationViewHolder(@NonNull View itemView) {
+            super(itemView);
+            dateTV = itemView.findViewById(R.id.obs_date);
+        }
+    }
+
+    public void updateData(ArrayList<BirdObservationItem> newObservationsList) {
         birdObservationArrayList.clear();
-        birdObservationArrayList = newObservationList;
+        birdObservationArrayList = newObservationsList;
         this.notifyDataSetChanged();
     }
 
     public interface OnObservationClickListener {
         void onBirdObservationClick(BirdObservation obs);
     }
+
+
 }

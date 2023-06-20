@@ -3,14 +3,12 @@ package com.github.v0id20.birding;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import java.util.ArrayList;
 
@@ -40,21 +38,15 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
         loader = view.findViewById(R.id.loadingPanel);
         loader.setVisibility(View.VISIBLE);
 
-        TextView header = view.findViewById(R.id.header);
         String regionCode = getArguments().getString(BirdObservation.REGION_CODE_EXTRA);
         String countryName = getArguments().getString(BirdObservation.COUNTRY_NAME_EXTRA);
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);
         double currentLongitude = getArguments().getDouble(BirdObservation.LONGITUDE_EXTRA);
-        if (regionCode != null) {
-            header.setText(getString(R.string.recent_notable_obs) + getString(R.string.in) + countryName);
-        } else if (currentLatitude != -1 && currentLongitude != -1) {
-            header.setText(getString(R.string.recent_notable_obs) + getString(R.string.nearby));
-        }
         observationPresenter.getData(observationPresenter, regionCode, currentLatitude, currentLongitude, observationsType);
 
     }
 
-    public void updateLists(ArrayList<BirdObservation> birdObservationsData) {
+    public void updateLists(ArrayList<BirdObservationItem> birdObservationsData) {
         observationAdapter.updateData(birdObservationsData);
         recyclerView.setAdapter(observationAdapter);
     }
@@ -64,7 +56,7 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
     }
 
     @Override
-    public void displayData(ArrayList<BirdObservation> arrayList) {
+    public void displayData(ArrayList<BirdObservationItem> arrayList) {
         hideLoader();
         updateLists(arrayList);
     }

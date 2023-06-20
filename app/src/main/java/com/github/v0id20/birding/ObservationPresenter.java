@@ -17,7 +17,7 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
         viewObservationsListModel.getData(presenterInstance, regionCode, latitude, longitude, type);
     }
 
-    public void updateContents(IDisplayData fragment, ArrayList<BirdObservation> arrayList) {
+    public void updateContents(IDisplayData fragment, ArrayList<BirdObservationItem> arrayList) {
         fragment.displayData(arrayList);
 
     }
@@ -28,7 +28,7 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
     }
 
     @Override
-    public void onApiResponseReceived(ArrayList<BirdObservation> arrayList) {
+    public void onApiResponseReceived(ArrayList<BirdObservationItem> arrayList) {
         updateContents(displayDataObject, arrayList);
     }
 }

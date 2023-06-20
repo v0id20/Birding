@@ -17,7 +17,7 @@ public class ViewObservationsListModel {
     public static final String BASE_URL = "https://api.ebird.org/";
     public static final String apiKey = "k5529ocdk9i0";
     ArrayList<BirdObservationDTO> apiResponse;
-    ArrayList<BirdObservation> birdObservationsData;
+    ArrayList<BirdObservationItem> birdObservationsData;
 
     public ViewObservationsListModel() {
     }
@@ -71,27 +71,38 @@ public class ViewObservationsListModel {
         });
     }
 
-    public ArrayList<BirdObservation> mapBirdObservations(ArrayList<BirdObservationDTO> observationDTOArrayList) {
+    public ArrayList<BirdObservationItem> mapBirdObservations(ArrayList<BirdObservationDTO> observationDTOArrayList) {
         return arrayListMappingFunction(observationDTOArrayList,
                 this::mapBirdObservationDto);
     }
 
-    private static <T, R> ArrayList<R> arrayListMappingFunction(ArrayList<T> input, Function<T, R> mapper) {
-        ArrayList<R> result = new ArrayList<>();
+    private static <T, R> ArrayList<BirdObservationItem> arrayListMappingFunction(ArrayList<T> input, Function<T, BirdObservationItem> mapper) {
+        ArrayList<BirdObservationItem> result = new ArrayList<>();
+        String headerDate = "";
         for (T birdObservationDTO : input) {
-            result.add(mapper.apply(birdObservationDTO));
+            BirdObservationItem birdObservationItem = mapper.apply((birdObservationDTO));
+
+            if (headerDate.equals(birdObservationItem.getObservationDate())) {
+                result.add(birdObservationItem);
+            } else {
+                BirdObservationDate obsDate = new BirdObservationDate();
+                obsDate.setObservationDate(birdObservationItem.getObservationDate());
+                result.add(obsDate);
+                result.add(birdObservationItem);
+                headerDate = obsDate.getObservationDate();
+            }
         }
         return result;
     }
 
-    public BirdObservation mapBirdObservationDto(BirdObservationDTO birdObservationDTO) {
+    public BirdObservationItem mapBirdObservationDto(BirdObservationDTO birdObservationDTO) {
         String date = null;
         String time = null;
         Date inputDate = null;
         BirdObservation birdObservation = new BirdObservation();
-        String inputDatePattern = "yyyy-MM-dd hh:mm";
-        String outputDatePattern = "dd-MMM-yy";
-        String outputTimePattern = "hh:mm";
+        String inputDatePattern = "yyyy-MM-dd HH:mm";
+        String outputDatePattern = "dd MMM";
+        String outputTimePattern = "HH:mm";
         SimpleDateFormat inputDateFormatter = new SimpleDateFormat(inputDatePattern);
         try {
             inputDate = inputDateFormatter.parse(birdObservationDTO.getObsDt());
@@ -100,8 +111,7 @@ public class ViewObservationsListModel {
             SimpleDateFormat outputTimeFormatter = new SimpleDateFormat(outputTimePattern);
             time = outputTimeFormatter.format(inputDate);
         } catch (ParseException e) {
-            time = null;
-            date = null;
+
         }
         birdObservation.setDate(date);
         birdObservation.setTime(time);
@@ -115,6 +125,6 @@ public class ViewObservationsListModel {
     }
 
     public interface onApiResponseReceived {
-        void onApiResponseReceived(ArrayList<BirdObservation> apiResponse);
+        void onApiResponseReceived(ArrayList<BirdObservationItem> apiResponse);
     }
 }
