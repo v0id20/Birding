@@ -4,17 +4,19 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/obs_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:padding="8sp"
+        android:padding="12sp"
+        android:layout_marginStart="16dp"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:textSize="14sp"
+        android:textColor="@color/black"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="12 June" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

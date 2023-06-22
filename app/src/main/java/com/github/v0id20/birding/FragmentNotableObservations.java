@@ -38,6 +38,8 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
         loader = view.findViewById(R.id.loadingPanel);
         loader.setVisibility(View.VISIBLE);
 
+        recyclerView.addItemDecoration(new StickyHeader(recyclerView, observationAdapter));
+
         String regionCode = getArguments().getString(BirdObservation.REGION_CODE_EXTRA);
         String countryName = getArguments().getString(BirdObservation.COUNTRY_NAME_EXTRA);
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);

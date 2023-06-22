@@ -16,8 +16,7 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
-        tools:text="14 - March - 2023 15:32" />
+        tools:text="15:32" />
 
     <TextView
         android:id="@+id/commonName"
@@ -30,7 +29,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/obs_time"
         app:layout_constraintVertical_chainStyle="spread"
-        tools:text="birdich " />
+        tools:text="Birdich " />
 
     <TextView
         android:id="@+id/sciName"

@@ -2,7 +2,6 @@ package com.github.v0id20.birding;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +43,7 @@ public class FragmentRecentObservations extends Fragment implements IDisplayData
 
         loader = view.findViewById(R.id.loadingPanel);
         loader.setVisibility(View.VISIBLE);
-
-
+        recyclerView.addItemDecoration(new StickyHeader(recyclerView, observationAdapter));
         String regionCode = getArguments().getString(BirdObservation.REGION_CODE_EXTRA);
         String countryName = getArguments().getString(BirdObservation.COUNTRY_NAME_EXTRA);
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);
@@ -83,22 +81,5 @@ public class FragmentRecentObservations extends Fragment implements IDisplayData
         this.startActivity(i);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d("kek", "eto destroyy view nahui");
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("kek", "eto destroyy nahui");
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("kek", "eto resume nahui");
-    }
 }

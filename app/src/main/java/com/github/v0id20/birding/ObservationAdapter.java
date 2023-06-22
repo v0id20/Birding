@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeader.StickyHeaderInterface {
     ArrayList<BirdObservationItem> birdObservationArrayList;
     OnObservationClickListener onObservationClickListener;
 
@@ -74,13 +74,47 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
 
     @Override
     public int getItemViewType(int position) {
-
         if (birdObservationArrayList.get(position) instanceof BirdObservation) {
             return 1;
         } else if (birdObservationArrayList.get(position) instanceof BirdObservationDate) {
             return 2;
         }
         return super.getItemViewType(position);
+    }
+
+    @Override
+    public int getHeaderPositionForItem(int itemPosition) {
+        int i;
+        i = itemPosition;
+        while (i > 0) {
+            if (birdObservationArrayList.get(i) instanceof BirdObservationDate) {
+                return i;
+            }
+            i--;
+        }
+        return 0;
+    }
+
+    @Override
+    public int getHeaderLayout(int headerPosition) {
+        return R.layout.item_obs_date;
+    }
+
+    @Override
+    public void bindHeaderData(View header, int headerPosition) {
+        String date = birdObservationArrayList.get(headerPosition).getObservationDate();
+        TextView dateTV = header.findViewById(R.id.obs_date);
+        dateTV.setText(date);
+
+    }
+
+    @Override
+    public boolean isHeader(int itemPosition) {
+        if (birdObservationArrayList.get(itemPosition) instanceof BirdObservationDate) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public class ObservationViewHolder extends RecyclerView.ViewHolder {

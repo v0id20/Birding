@@ -1,5 +1,7 @@
 package com.github.v0id20.birding;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,7 +67,6 @@ public class ViewObservationsListModel {
             public void onFailure(Call<ArrayList<BirdObservationDTO>> call, Throwable t) {
                 // Log error here since request failed
                 onApiResponseReceived.onApiResponseReceived(birdObservationsData);
-
                 System.out.println("Error");
             }
         });
@@ -86,18 +87,20 @@ public class ViewObservationsListModel {
                 result.add(birdObservationItem);
             } else {
                 BirdObservationDate obsDate = new BirdObservationDate();
-                obsDate.setObservationDate(birdObservationItem.getObservationDate());
-                result.add(obsDate);
-                result.add(birdObservationItem);
-                headerDate = obsDate.getObservationDate();
+                if (birdObservationItem.getObservationDate() != null) {
+                    obsDate.setObservationDate(birdObservationItem.getObservationDate());
+                    result.add(obsDate);
+                    result.add(birdObservationItem);
+                    headerDate = obsDate.getObservationDate();
+                }
             }
         }
         return result;
     }
 
     public BirdObservationItem mapBirdObservationDto(BirdObservationDTO birdObservationDTO) {
-        String date = null;
-        String time = null;
+        String date = "";
+        String time = "";
         Date inputDate = null;
         BirdObservation birdObservation = new BirdObservation();
         String inputDatePattern = "yyyy-MM-dd HH:mm";
@@ -111,6 +114,7 @@ public class ViewObservationsListModel {
             SimpleDateFormat outputTimeFormatter = new SimpleDateFormat(outputTimePattern);
             time = outputTimeFormatter.format(inputDate);
         } catch (ParseException e) {
+            Log.e("ViewObservationModel", "mapBirdObservationDto: ", e);
 
         }
         birdObservation.setDate(date);
