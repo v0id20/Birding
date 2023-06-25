@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class ObservationPresenter implements ObservationAdapter.OnObservationClickListener, ViewObservationsListModel.onApiResponseReceived {
 
     private ViewObservationsListModel viewObservationsListModel;
-    private IDisplayData displayDataObject;
+    private IDisplayDataReceived displayDataObject;
 
-    public ObservationPresenter(IDisplayData displayDataObject) {
+    public ObservationPresenter(IDisplayDataReceived displayDataObject) {
         super();
         viewObservationsListModel = new ViewObservationsListModel();
         this.displayDataObject = displayDataObject;
@@ -17,8 +17,8 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
         viewObservationsListModel.getData(presenterInstance, regionCode, latitude, longitude, type);
     }
 
-    public void updateContents(IDisplayData fragment, ArrayList<BirdObservationItem> arrayList) {
-        fragment.displayData(arrayList);
+    public void updateContents(IDisplayDataReceived fragment, ArrayList<BirdObservationItem> arrayList) {
+        fragment.displayDataReceived(arrayList);
 
     }
 

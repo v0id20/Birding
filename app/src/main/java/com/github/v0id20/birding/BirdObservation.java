@@ -73,18 +73,23 @@ public class BirdObservation extends BirdObservationItem {
     public String getSubnational1Name() {
         return subnational1Name;
     }
+
     public void setSubnational1Name(String subnational1Name) {
         this.subnational1Name = subnational1Name;
     }
+
     public String getLatitude() {
         return latitude;
     }
+
     public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
+
     public String getLongitude() {
         return longitude;
     }
+
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }

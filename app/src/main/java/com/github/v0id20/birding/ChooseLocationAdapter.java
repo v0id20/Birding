@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class LocationAdapter extends RecyclerView.Adapter {
+public class ChooseLocationAdapter extends RecyclerView.Adapter {
 
     private ArrayList<LocationViewType> locationViewTypeArrayList;
 
@@ -28,8 +28,7 @@ public class LocationAdapter extends RecyclerView.Adapter {
         this.onChosenLocationClickListener = onChosenLocationClickListener;
     }
 
-    public LocationAdapter() {
-
+    public ChooseLocationAdapter() {
     }
 
     public void setLocationViewTypeArrayList(ArrayList<LocationViewType> locationViewTypeArrayList) {
@@ -49,7 +48,7 @@ public class LocationAdapter extends RecyclerView.Adapter {
 
         if (viewType == 1) {
             itemView = inflater.inflate(R.layout.item_mylocation, parent, false);
-            LocationAdapter.MyLocationViewHolder viewHolder = new LocationAdapter.MyLocationViewHolder(itemView);
+            ChooseLocationAdapter.MyLocationViewHolder viewHolder = new ChooseLocationAdapter.MyLocationViewHolder(itemView);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -60,11 +59,11 @@ public class LocationAdapter extends RecyclerView.Adapter {
             return viewHolder;
         } else {
             itemView = inflater.inflate(R.layout.item_location, parent, false);
-            LocationAdapter.ChosenLocationViewHolder viewHolder = new LocationAdapter.ChosenLocationViewHolder(itemView);
+            ChooseLocationAdapter.ChosenLocationViewHolder viewHolder = new ChooseLocationAdapter.ChosenLocationViewHolder(itemView);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onChosenLocationClickListener.onChosenLocationClick(locationViewTypeArrayList.get(viewHolder.getAdapterPosition()).getLocationCode(), locationViewTypeArrayList.get(viewHolder.getAdapterPosition()).getLocation());
+                    onChosenLocationClickListener.onChosenLocationClick(locationViewTypeArrayList.get(viewHolder.getAdapterPosition()).getCode(), locationViewTypeArrayList.get(viewHolder.getAdapterPosition()).getName());
                 }
             });
             itemView.setBackgroundResource(backgroundResource);
@@ -76,10 +75,10 @@ public class LocationAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == 1) {
-            ((LocationAdapter.MyLocationViewHolder) holder).myLocation.setText(locationViewTypeArrayList.get(position).getLocation());
+            ((ChooseLocationAdapter.MyLocationViewHolder) holder).myLocation.setText(locationViewTypeArrayList.get(position).getName());
             ((MyLocationViewHolder) holder).myLocationIcon.setImageResource(R.drawable.ic_my_location);
         } else {
-            ((LocationAdapter.ChosenLocationViewHolder) holder).location.setText(locationViewTypeArrayList.get(position).getLocation());
+            ((ChooseLocationAdapter.ChosenLocationViewHolder) holder).location.setText(locationViewTypeArrayList.get(position).getName());
         }
     }
 

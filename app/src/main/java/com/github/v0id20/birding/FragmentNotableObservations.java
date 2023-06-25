@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class FragmentNotableObservations extends Fragment implements IDisplayData {
+public class FragmentNotableObservations extends Fragment implements IDisplayDataReceived {
     ObservationPresenter observationPresenter;
     private ObservationAdapter observationAdapter;
     private RecyclerView recyclerView;
@@ -34,10 +34,8 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
         observationPresenter = new ObservationPresenter(FragmentNotableObservations.this);
         observationAdapter.setOnObservationClickListener(observationPresenter);
 
-
         loader = view.findViewById(R.id.loadingPanel);
         loader.setVisibility(View.VISIBLE);
-
         recyclerView.addItemDecoration(new StickyHeader(recyclerView, observationAdapter));
 
         String regionCode = getArguments().getString(BirdObservation.REGION_CODE_EXTRA);
@@ -58,7 +56,7 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
     }
 
     @Override
-    public void displayData(ArrayList<BirdObservationItem> arrayList) {
+    public void displayDataReceived(ArrayList<BirdObservationItem> arrayList) {
         hideLoader();
         updateLists(arrayList);
     }

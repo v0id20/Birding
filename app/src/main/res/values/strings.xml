@@ -12,4 +12,7 @@
     <string name="in">in\u0020</string>
     <string name="recent">Recent</string>
     <string name="notable">Notable</string>
+    <string name="choose_location">Choose Location To Start</string>
+    <string name="location_access_disabled_in_settings">Location access is disabled in the settings</string>
+    <string name="unable_to_retrieve_location">There was an issue with retrieving your current location, try again later.</string>
 </resources>

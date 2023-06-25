@@ -21,9 +21,6 @@ public class ViewObservationsListModel {
     ArrayList<BirdObservationDTO> apiResponse;
     ArrayList<BirdObservationItem> birdObservationsData;
 
-    public ViewObservationsListModel() {
-    }
-
     OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -115,7 +112,6 @@ public class ViewObservationsListModel {
             time = outputTimeFormatter.format(inputDate);
         } catch (ParseException e) {
             Log.e("ViewObservationModel", "mapBirdObservationDto: ", e);
-
         }
         birdObservation.setDate(date);
         birdObservation.setTime(time);

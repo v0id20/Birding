@@ -19,10 +19,11 @@
         app:layout_constraintLeft_toRightOf="@id/mylocation_icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:text="My location"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:fontFamily="@font/roboto"
+        tools:text="My location" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

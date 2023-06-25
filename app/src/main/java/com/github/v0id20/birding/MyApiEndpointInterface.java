@@ -17,10 +17,13 @@ public interface MyApiEndpointInterface {
     Call<ArrayList<BirdObservationDTO>> getNearbyObservations(@Query("lat") double latitude, @Query("lng") double longitude, @Header("X-eBirdApiToken") String authorization);
 
     @GET("/v2/data/obs/{regionCode}/recent/notable?detail=full")
-    Call<ArrayList<BirdObservationDTO>> getNotableObservations(@Path("regionCode") String resionCode, @Header("X-eBirdApiToken") String authorization);
+    Call<ArrayList<BirdObservationDTO>> getNotableObservations(@Path("regionCode") String regionCode, @Header("X-eBirdApiToken") String authorization);
 
     @GET("/v2/data/obs/geo/recent/notable?")
     Call<ArrayList<BirdObservationDTO>> getNearbyNotableObservations(@Query("lat") double latitude, @Query("lng") double longitude, @Header("X-eBirdApiToken") String authorization);
+
+    @GET("v2/ref/region/list/{regionType}/{parentRegionCode}")
+    Call<ArrayList<LocationViewType>> getCountriesList(@Path("regionType") String regionType, @Path("parentRegionCode") String parentRegionCode, @Header("X-eBirdApiToken") String authorization);
 
 }
 

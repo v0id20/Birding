@@ -126,7 +126,7 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         public ObservationViewHolder(@NonNull View itemView) {
             super(itemView);
             timeTV = itemView.findViewById(R.id.obs_time);
-            commonNameTV = itemView.findViewById(R.id.commonName);
+            commonNameTV = itemView.findViewById(R.id.common_name);
             sciNameTV = itemView.findViewById(R.id.sciName);
             locationTV = itemView.findViewById(R.id.location);
         }

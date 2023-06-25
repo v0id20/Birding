@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class FragmentRecentObservations extends Fragment implements IDisplayData {
+public class FragmentRecentObservations extends Fragment implements IDisplayDataReceived {
     ObservationPresenter observationPresenter;
     private ObservationAdapter observationAdapter;
     private RecyclerView recyclerView;
@@ -63,7 +63,7 @@ public class FragmentRecentObservations extends Fragment implements IDisplayData
     }
 
     @Override
-    public void displayData(ArrayList<BirdObservationItem> arrayList) {
+    public void displayDataReceived(ArrayList<BirdObservationItem> arrayList) {
         hideLoader();
         updateLists(arrayList);
     }
