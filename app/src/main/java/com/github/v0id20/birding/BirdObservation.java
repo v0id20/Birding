@@ -5,6 +5,7 @@ public class BirdObservation extends BirdObservationItem {
     public static final String SCIENTIFIC_NAME_EXTRA = "Scientific name";
     public static final String LOCATION_NAME_EXTRA = "Location name";
     public static final String COUNTRY_NAME_EXTRA = "Country name";
+    public static final String REGION_NAME_EXTRA = "Region name";
     public static final String REGION_CODE_EXTRA = "Region Code";
     public static final String LATITUDE_EXTRA = "Latitude";
     public static final String LONGITUDE_EXTRA = "Longitude";

@@ -12,78 +12,85 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChooseLocationModel {
-
     public static final String BASE_URL = "https://api.ebird.org/";
-    public static final String REGION_TYPE = "country";
+    public static final String REGION_TYPE_COUNTRY = "country";
+    public static final String REGION_TYPE_SUBNATIONAL1 = "subnational1";
     private static final String PARENT_REGION_CODE = "world";
     public static final String apiKey = "k5529ocdk9i0";
+    private ArrayList<LocationDto> apiResponse;
+    private final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private final Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).client(httpClient.build()).build();
+    private final MyApiEndpointInterface myApi = retrofit.create(MyApiEndpointInterface.class);
 
-    public ArrayList<LocationViewType> getLocationList() {
-        return locationList;
-    }
-
-    OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    private ArrayList<LocationViewType> locationList;
-    private ChooseLocationPresenter chooseLocationPresenter;
-
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(httpClient.build())
-            .build();
-
-    MyApiEndpointInterface myApi = retrofit.create(MyApiEndpointInterface.class);
-
-    public ChooseLocationModel(ChooseLocationPresenter chooseLocationPresenter) {
-        this.chooseLocationPresenter = chooseLocationPresenter;
-
-//
-//        locationList = new ArrayList<LocationViewType>();
-//        locationList.add(new LocationViewType(1, "My location"));
-//        locationList.add(new LocationViewType(2, "Albania", "AL"));
-//        locationList.add(new LocationViewType(2, "Botswana", "BW"));
-//        locationList.add(new LocationViewType(2, "Brazil", "BR"));
-//        locationList.add(new LocationViewType(2, "Canada", "CA"));
-//        locationList.add(new LocationViewType(2, "Ethiopia", "ET"));
-//        locationList.add(new LocationViewType(2, "Germany", "DE"));
-//        locationList.add(new LocationViewType(2, "Guatemala", "GT"));
-//        locationList.add(new LocationViewType(2, "Kazakhstan", "KZ"));
-//        locationList.add(new LocationViewType(2, "Latvia", "LV"));
-//        locationList.add(new LocationViewType(2, "Malawi", "MW"));
-//        locationList.add(new LocationViewType(2, "Romania", "RO"));
-//        locationList.add(new LocationViewType(2, "Slovenia", "SI"));
-//        locationList.add(new LocationViewType(2, "Turkey", "TR"));
-//        locationList.add(new LocationViewType(2, "USA", "US"));
-//        locationList.add(new LocationViewType(2, "Zambia", "ZM"));
-    }
-
-    public void requestCountriesList() {
-
-        Call<ArrayList<LocationViewType>> call = null;
-        call = myApi.getCountriesList(REGION_TYPE, PARENT_REGION_CODE, apiKey);
+    public void requestCountriesList(OnRequestResultCallback callback) {
+        Call<ArrayList<LocationDto>> call = myApi.getLocationsList(REGION_TYPE_COUNTRY, PARENT_REGION_CODE, apiKey);
         if (call != null) {
-            sendQuery(call);
+            sendCountryQuery(call, callback);
         }
     }
 
+    public void requestSubnationalRegionsList(LocationCountry country, OnRequestRegionResultCallback callback) {
+        Call<ArrayList<LocationDto>> call = myApi.getLocationsList(REGION_TYPE_SUBNATIONAL1, country.getLocationCode(), apiKey);
+        if (call != null) {
+            sendRegionQuery(call, callback, country);
+        }
+    }
 
-    public void sendQuery(Call<ArrayList<LocationViewType>> call) {
-        call.enqueue(new Callback<ArrayList<LocationViewType>>() {
+    private void sendRegionQuery(Call<ArrayList<LocationDto>> call, OnRequestRegionResultCallback callback, LocationCountry country) {
+        call.enqueue(new Callback<ArrayList<LocationDto>>() {
             @Override
-            public void onResponse(Call<ArrayList<LocationViewType>> call, Response<ArrayList<LocationViewType>> response) {
-                locationList = response.body();
-                for (LocationViewType v : locationList) {
-                    v.setViewType(2);
-                }
-                locationList.add(0, new LocationViewType(1, "My Location"));
-                chooseLocationPresenter.onLocationDataReceived(locationList);
+            public void onResponse(Call<ArrayList<LocationDto>> call, Response<ArrayList<LocationDto>> response) {
+                apiResponse = response.body();
+                ArrayList<LocationRegion> locationList = convertResultToLocationRegionArrayList(apiResponse, country);
+                callback.onRequestRegionResult(locationList);
             }
 
             @Override
-            public void onFailure(Call<ArrayList<LocationViewType>> call, Throwable t) {
-                Log.d("LocationModel", "onFailure: was not able to retrieve data", t);
+            public void onFailure(Call<ArrayList<LocationDto>> call, Throwable t) {
+                Log.d("LocationModel", "onFailure: was not able to retrieve subnational regions data", t);
             }
         });
+    }
 
+    private void sendCountryQuery(Call<ArrayList<LocationDto>> call, OnRequestResultCallback callback) {
+        call.enqueue(new Callback<ArrayList<LocationDto>>() {
+            @Override
+            public void onResponse(Call<ArrayList<LocationDto>> call, Response<ArrayList<LocationDto>> response) {
+                apiResponse = response.body();
+                ArrayList<LocationCountry> locationList = convertResultToLocationCountryArrayList(apiResponse);
+                callback.onRequestCountryResult(locationList);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<LocationDto>> call, Throwable t) {
+                Log.d("LocationModel", "onFailure: was not able to retrieve country data", t);
+            }
+        });
+    }
+
+    private ArrayList<LocationCountry> convertResultToLocationCountryArrayList(ArrayList<LocationDto> locationDtoArrayList) {
+        ArrayList<LocationCountry> result = new ArrayList<>();
+        result.add(0, new LocationCountry(1, "My Location"));
+        for (LocationDto locationDto : locationDtoArrayList) {
+            result.add(locationDto.mapLocationDto());
+        }
+        return result;
+    }
+
+    private ArrayList<LocationRegion> convertResultToLocationRegionArrayList(ArrayList<LocationDto> locationDtoArrayList, LocationCountry parentCountry) {
+        ArrayList<LocationRegion> result = new ArrayList<>();
+        result.add(new LocationRegion("All Regions", parentCountry.getLocationCode(), parentCountry));
+        for (LocationDto locationDto : locationDtoArrayList) {
+            result.add(locationDto.mapLocationDto(parentCountry));
+        }
+        return result;
+    }
+
+    public interface OnRequestResultCallback {
+        void onRequestCountryResult(ArrayList<LocationCountry> locationList);
+    }
+
+    public interface OnRequestRegionResultCallback {
+        void onRequestRegionResult(ArrayList<LocationRegion> locationList);
     }
 }

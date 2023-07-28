@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class StickyHeader extends RecyclerView.ItemDecoration {
 
-    private StickyHeaderInterface mListener;
+    private final StickyHeaderInterface mListener;
     private int mStickyHeaderHeight;
     View currentHeader;
     boolean wasPreviouslyHeader = false;

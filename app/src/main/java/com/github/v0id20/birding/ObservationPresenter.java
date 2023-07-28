@@ -2,10 +2,18 @@ package com.github.v0id20.birding;
 
 import java.util.ArrayList;
 
-public class ObservationPresenter implements ObservationAdapter.OnObservationClickListener, ViewObservationsListModel.onApiResponseReceived {
+public class ObservationPresenter implements ObservationAdapter.OnObservationClickListener, ViewObservationsListModel.onApiResponseReceived, ViewObservationsListModel.onLocationsDecodedListener {
+    private final ViewObservationsListModel viewObservationsListModel;
+    private final IDisplayDataReceived displayDataObject;
+    private LocationDecoder locationDecoder;
 
-    private ViewObservationsListModel viewObservationsListModel;
-    private IDisplayDataReceived displayDataObject;
+
+    public ObservationPresenter(IDisplayDataReceived displayDataObject, LocationDecoder locationDecoder) {
+        super();
+        viewObservationsListModel = new ViewObservationsListModel();
+        this.displayDataObject = displayDataObject;
+        this.locationDecoder = locationDecoder;
+    }
 
     public ObservationPresenter(IDisplayDataReceived displayDataObject) {
         super();
@@ -13,13 +21,16 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
         this.displayDataObject = displayDataObject;
     }
 
-    public void getData(ViewObservationsListModel.onApiResponseReceived presenterInstance, String regionCode, double latitude, double longitude, String type) {
-        viewObservationsListModel.getData(presenterInstance, regionCode, latitude, longitude, type);
+    public void getData(ViewObservationsListModel.onApiResponseReceived presenterInstance, String countryName, String regionCode, double latitude, double longitude, String type) {
+        if (latitude != -1000 && longitude != -1000) {
+            viewObservationsListModel.getData(presenterInstance, latitude, longitude, type);
+        } else if (regionCode != null) {
+            viewObservationsListModel.getData(presenterInstance, countryName, regionCode, type);
+        }
     }
 
     public void updateContents(IDisplayDataReceived fragment, ArrayList<BirdObservationItem> arrayList) {
         fragment.displayDataReceived(arrayList);
-
     }
 
     @Override
@@ -29,6 +40,12 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
 
     @Override
     public void onApiResponseReceived(ArrayList<BirdObservationItem> arrayList) {
+        if (locationDecoder != null) {
+            viewObservationsListModel.decodeLocations(locationDecoder, arrayList, this);
+        }
+    }
+
+    public void onLocationsDecoded(ArrayList<BirdObservationItem> arrayList) {
         updateContents(displayDataObject, arrayList);
     }
 }

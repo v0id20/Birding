@@ -7,9 +7,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import java.util.ArrayList;
 
 public interface ChooseLocationView {
-    void displayLocationDataReceived(ArrayList<LocationViewType> locationDataArrayList);
+    void displayCountriesListReceived(ArrayList<LocationCountry> locationDataArrayList);
 
-    void onChosenLocationClick(String regionCode, String countryName);
+    void onChosenLocationClick(LocationRegion region);
 
     void onMyLocationClick(double lat, double lon);
 
@@ -26,4 +26,7 @@ public interface ChooseLocationView {
     void showLocationDisabledToast();
 
     void showUnableToGetLocationToast();
+
+    void displayRegionListReceived(ArrayList<LocationRegion> locationList, int position);
+
 }

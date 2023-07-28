@@ -30,12 +30,16 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 
 public class ChooseLocationActivity extends AppCompatActivity implements ChooseLocationView {
-    private ChooseLocationPresenter chooseLocationPresenter;
+
+    public static final int REQUEST_CODE = 231;
+    public static final String googlemapskey = "AIzaSyC1iLNxnwwxOoWnk5rhpYVdscynweAY05k";
     private ConstraintLayout constraintLayout;
     private RecyclerView recyclerView;
-    ProgressBar loader;
+    private ProgressBar loader;
     private ActivityResultLauncher<Intent> launcher;
-    public static final int REQUEST_CODE = 231;
+    private ChooseLocationAdapter chooseLocationAdapter;
+    private ChooseLocationPresenter chooseLocationPresenter;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,8 +91,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     }
 
     private void showSnack(View view, int stringResourceId, int duration) {
-        Snackbar snackbar = Snackbar
-                .make(view, stringResourceId, duration);
+        Snackbar snackbar = Snackbar.make(view, stringResourceId, duration);
         snackbar.show();
     }
 
@@ -101,20 +104,26 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     }
 
     @Override
-    public void displayLocationDataReceived(ArrayList<LocationViewType> locationDataArrayList) {
+    public void displayCountriesListReceived(ArrayList<LocationCountry> locationDataArrayList) {
         hideLoader();
-        ChooseLocationAdapter chooseLocationAdapter = new ChooseLocationAdapter();
-        chooseLocationAdapter.setLocationViewTypeArrayList(locationDataArrayList);
+        chooseLocationAdapter = new ChooseLocationAdapter();
+        chooseLocationAdapter.setCountryArrayList(locationDataArrayList);
         recyclerView.setAdapter(chooseLocationAdapter);
         chooseLocationAdapter.setOnMyLocationClickListener(chooseLocationPresenter);
         chooseLocationAdapter.setOnChosenLocationClickListener(chooseLocationPresenter);
+        chooseLocationAdapter.setOnCountryClickListener(chooseLocationPresenter);
+    }
+
+    public void displayRegionListReceived(ArrayList<LocationRegion> locationList, int position) {
+        chooseLocationAdapter.bind(locationList, position);
     }
 
     @Override
-    public void onChosenLocationClick(String locationCode, String countryName) {
+    public void onChosenLocationClick(LocationRegion region) {
         Intent i = new Intent(this, ViewObservationsListActivity.class);
-        i.putExtra(BirdObservation.REGION_CODE_EXTRA, locationCode);
-        i.putExtra(BirdObservation.COUNTRY_NAME_EXTRA, countryName);
+        i.putExtra(BirdObservation.REGION_CODE_EXTRA, region.getLocationCode());
+        i.putExtra(BirdObservation.REGION_NAME_EXTRA, region.getLocationName());
+        i.putExtra(BirdObservation.COUNTRY_NAME_EXTRA, region.getCountry().getLocationName());
         this.startActivity(i);
     }
 

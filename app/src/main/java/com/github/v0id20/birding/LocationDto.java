@@ -1,18 +1,9 @@
 package com.github.v0id20.birding;
 
-public class LocationViewType {
-    private int viewType;
+public class LocationDto {
+
     private String name;
     private String code;
-
-
-    public int getViewType() {
-        return viewType;
-    }
-
-    public void setViewType(Integer viewType) {
-        this.viewType = viewType;
-    }
 
     public String getName() {
         return name;
@@ -30,9 +21,14 @@ public class LocationViewType {
         this.code = code;
     }
 
-    public LocationViewType(int viewType, String location) {
-        this.viewType = viewType;
-        this.name = location;
+    public LocationCountry mapLocationDto() {
+        return new LocationCountry(2, this.getName(), this.getCode());
+    }
+
+    public LocationRegion mapLocationDto(LocationCountry country) {
+        return new LocationRegion(this.getName(), this.getCode(), country);
     }
 
 }
+
+

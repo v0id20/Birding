@@ -110,11 +110,7 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
 
     @Override
     public boolean isHeader(int itemPosition) {
-        if (birdObservationArrayList.get(itemPosition) instanceof BirdObservationDate) {
-            return true;
-        } else {
-            return false;
-        }
+        return birdObservationArrayList.get(itemPosition) instanceof BirdObservationDate;
     }
 
     public class ObservationViewHolder extends RecyclerView.ViewHolder {

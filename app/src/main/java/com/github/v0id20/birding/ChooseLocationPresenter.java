@@ -14,22 +14,26 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
-public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocationClickListener, ChooseLocationAdapter.OnChosenLocationClickListener {
+public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocationClickListener, ChooseLocationAdapter.OnRegionClickListener, ChooseLocationAdapter.OnCountryClickListener {
     private FusedLocationProviderClient fusedLocationClient;
-    private ChooseLocationView chooseLocationView;
-    private ChooseLocationModel chooseLocationModel;
+    private final ChooseLocationView chooseLocationView;
+    private final ChooseLocationModel chooseLocationModel;
 
     public ChooseLocationPresenter(ChooseLocationView chooseLocationView) {
         this.chooseLocationView = chooseLocationView;
-        chooseLocationModel = new ChooseLocationModel(this);
+        chooseLocationModel = new ChooseLocationModel();
     }
 
     public void requestLocationData() {
-        chooseLocationModel.requestCountriesList();
+        chooseLocationModel.requestCountriesList(locationList -> onCountriesListReceived(locationList));
     }
 
-    public void onLocationDataReceived(ArrayList<LocationViewType> locationList) {
-        chooseLocationView.displayLocationDataReceived(locationList);
+    private void onCountriesListReceived(ArrayList<LocationCountry> locationList) {
+        chooseLocationView.displayCountriesListReceived(locationList);
+    }
+
+    private void onRegionListReceived(ArrayList<LocationRegion> locationList, int position) {
+        chooseLocationView.displayRegionListReceived(locationList, position);
     }
 
     @SuppressLint("MissingPermission")
@@ -47,12 +51,6 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
     }
 
     @Override
-    public void onChosenLocationClick(String locationCode, String countryName) {
-        chooseLocationView.onChosenLocationClick(locationCode, countryName);
-    }
-
-
-    @Override
     public void onMyLocationClick() {
         if (chooseLocationView.checkLocationPermissionGranted()) {
             getCurrentLocation(chooseLocationView.getLocationManager().isLocationEnabled());
@@ -61,6 +59,20 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
         }
     }
 
+    @Override
+    public void onRegionClick(LocationRegion region) {
+        chooseLocationView.onChosenLocationClick(region);
+    }
+
+    public void onCountryClick(LocationCountry country, int position) {
+        ChooseLocationModel.OnRequestRegionResultCallback khh = new ChooseLocationModel.OnRequestRegionResultCallback() {
+            @Override
+            public void onRequestRegionResult(ArrayList<LocationRegion> locationList) {
+                onRegionListReceived(locationList, position);
+            }
+        };
+        chooseLocationModel.requestSubnationalRegionsList(country, khh);
+    }
 
     public void getCurrentLocation(boolean locationEnabled) {
         if (locationEnabled) {
@@ -91,9 +103,7 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
         });
     }
 
-
     public class OnRetrieveLocationListener implements OnFailureListener, OnSuccessListener<Location> {
-
         @Override
         public void onFailure(@NonNull Exception e) {
             Log.e("ChooseLocationPresenter", "onFailure: could not  retrieve current location", e);

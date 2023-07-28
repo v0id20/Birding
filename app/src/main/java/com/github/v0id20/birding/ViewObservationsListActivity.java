@@ -15,8 +15,8 @@ import com.google.android.material.tabs.TabLayout;
 public class ViewObservationsListActivity extends AppCompatActivity {
     public static final String OBSERVATIONS_TYPE_RECENT = "recent";
     public static final String OBSERVATIONS_TYPE_NOTABLE = "notable";
-    TabLayout tabLayout;
-    ViewPager viewPager;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +24,14 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_observations_list);
         Intent i = getIntent();
         String regionCode = i.getStringExtra(BirdObservation.REGION_CODE_EXTRA);
-        double currentLatitude = i.getDoubleExtra(BirdObservation.LATITUDE_EXTRA, -1);
-        double currentLongitude = i.getDoubleExtra(BirdObservation.LONGITUDE_EXTRA, -1);
+        double currentLatitude = i.getDoubleExtra(BirdObservation.LATITUDE_EXTRA, -1000);
+        double currentLongitude = i.getDoubleExtra(BirdObservation.LONGITUDE_EXTRA, -1000);
         TextView header = findViewById(R.id.header);
         String countryName = null;
         if (regionCode != null) {
+            String regionName = i.getStringExtra(BirdObservation.REGION_NAME_EXTRA);
             countryName = i.getStringExtra(BirdObservation.COUNTRY_NAME_EXTRA);
-            header.setText(countryName);
+            header.setText(countryName + ", " + regionName);
         } else if (currentLatitude != -1 && currentLongitude != -1) {
             header.setText(getString(R.string.nearby));
         }
@@ -40,10 +41,8 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         locationData.putDouble(BirdObservation.LATITUDE_EXTRA, currentLatitude);
         locationData.putDouble(BirdObservation.LONGITUDE_EXTRA, currentLongitude);
 
-
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-
 
         tabLayout.addTab(tabLayout.newTab().setText(R.string.recent));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.notable));
@@ -61,12 +60,9 @@ public class ViewObservationsListActivity extends AppCompatActivity {
     }
 
     class MyTabListener implements TabLayout.OnTabSelectedListener {
-
-
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
             viewPager.setCurrentItem(tab.getPosition());
-
         }
 
         @Override
@@ -83,16 +79,12 @@ public class ViewObservationsListActivity extends AppCompatActivity {
             MyAnimationListener myAnimationListener = new MyAnimationListener(tab, tab.getPosition());
             translateAnimation.setAnimationListener(myAnimationListener);
 
-
             tab.view.clearAnimation();
             tab.view.startAnimation(translateAnimation);
-
-
         }
 
         @Override
         public void onTabReselected(TabLayout.Tab tab) {
-
         }
 
         class MyAnimationListener implements Animation.AnimationListener {
@@ -107,7 +99,6 @@ public class ViewObservationsListActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
@@ -123,7 +114,6 @@ public class ViewObservationsListActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         }
     }

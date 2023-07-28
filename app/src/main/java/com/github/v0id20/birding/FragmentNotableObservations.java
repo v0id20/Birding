@@ -42,7 +42,7 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
         String countryName = getArguments().getString(BirdObservation.COUNTRY_NAME_EXTRA);
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);
         double currentLongitude = getArguments().getDouble(BirdObservation.LONGITUDE_EXTRA);
-        observationPresenter.getData(observationPresenter, regionCode, currentLatitude, currentLongitude, observationsType);
+        observationPresenter.getData(observationPresenter, countryName, regionCode, currentLatitude, currentLongitude, observationsType);
 
     }
 

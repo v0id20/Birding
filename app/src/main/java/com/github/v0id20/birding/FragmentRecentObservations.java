@@ -1,6 +1,7 @@
 package com.github.v0id20.birding;
 
 import android.content.Intent;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class FragmentRecentObservations extends Fragment implements IDisplayDataReceived {
+public class FragmentRecentObservations extends Fragment implements IDisplayDataReceived, LocationDecoder {
     ObservationPresenter observationPresenter;
     private ObservationAdapter observationAdapter;
     private RecyclerView recyclerView;
@@ -38,7 +39,7 @@ public class FragmentRecentObservations extends Fragment implements IDisplayData
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         observationAdapter = new ObservationAdapter(new ArrayList<>());
-        observationPresenter = new ObservationPresenter(FragmentRecentObservations.this);
+        observationPresenter = new ObservationPresenter(FragmentRecentObservations.this, FragmentRecentObservations.this);
         observationAdapter.setOnObservationClickListener(observationPresenter);
 
         loader = view.findViewById(R.id.loadingPanel);
@@ -49,9 +50,8 @@ public class FragmentRecentObservations extends Fragment implements IDisplayData
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);
         double currentLongitude = getArguments().getDouble(BirdObservation.LONGITUDE_EXTRA);
 
-        observationPresenter.getData(observationPresenter, regionCode, currentLatitude, currentLongitude, observationsType);
+        observationPresenter.getData(observationPresenter, countryName, regionCode, currentLatitude, currentLongitude, observationsType);
     }
-
 
     public void updateLists(ArrayList<BirdObservationItem> birdObservationsData) {
         observationAdapter.updateData(birdObservationsData);
@@ -82,4 +82,9 @@ public class FragmentRecentObservations extends Fragment implements IDisplayData
     }
 
 
+    //I create geocoder in Fragment as I dont have context in other places, OK?
+    @Override
+    public Geocoder getGeocoder() {
+        return new Geocoder(getContext());
+    }
 }

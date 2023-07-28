@@ -14,7 +14,7 @@
 
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/white</item>
-        <item name="android:colorControlHighlight">@color/teal_100</item>
+        <item name="android:colorControlHighlight">@color/grey_200</item>
 
     </style>
 
