@@ -1,8 +1,11 @@
 package com.github.v0id20.birding;
 
 import android.content.Intent;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,43 +15,41 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class FragmentNotableObservations extends Fragment implements IDisplayDataReceived {
-    ObservationPresenter observationPresenter;
+public class FragmentObservations extends Fragment implements IDisplayDataReceived, LocationDecoder {
+    private ObservationPresenter observationPresenter;
     private ObservationAdapter observationAdapter;
     private RecyclerView recyclerView;
     private String observationsType;
     private View loader;
 
-    public FragmentNotableObservations() {
-        super(R.layout.fragment_notable_observations);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        observationsType = getArguments().getString(ViewObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE);
+        if (observationsType.equals(ViewObservationsListActivity.OBSERVATIONS_TYPE_RECENT)) {
+            return inflater.inflate(R.layout.fragment_recent_obsevations, container, false);
+        } else if (observationsType.equals(ViewObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE)) {
+            return inflater.inflate(R.layout.fragment_recent_obsevations, container, false);
+        }
+        return null;
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        observationsType = ViewObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE;
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        observationPresenter = new ObservationPresenter(this, this);
         observationAdapter = new ObservationAdapter(new ArrayList<>());
-        observationPresenter = new ObservationPresenter(FragmentNotableObservations.this);
         observationAdapter.setOnObservationClickListener(observationPresenter);
-
+        recyclerView.addItemDecoration(new StickyHeader(recyclerView, observationAdapter));
         loader = view.findViewById(R.id.loadingPanel);
         loader.setVisibility(View.VISIBLE);
-        recyclerView.addItemDecoration(new StickyHeader(recyclerView, observationAdapter));
-
         String regionCode = getArguments().getString(BirdObservation.REGION_CODE_EXTRA);
         String countryName = getArguments().getString(BirdObservation.COUNTRY_NAME_EXTRA);
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);
         double currentLongitude = getArguments().getDouble(BirdObservation.LONGITUDE_EXTRA);
         observationPresenter.getData(observationPresenter, countryName, regionCode, currentLatitude, currentLongitude, observationsType);
-
-    }
-
-    public void updateLists(ArrayList<BirdObservationItem> birdObservationsData) {
-        observationAdapter.updateData(birdObservationsData);
-        recyclerView.setAdapter(observationAdapter);
     }
 
     public void hideLoader() {
@@ -61,6 +62,11 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
         updateLists(arrayList);
     }
 
+    public void updateLists(ArrayList<BirdObservationItem> birdObservationsData) {
+        observationAdapter.updateData(birdObservationsData);
+        recyclerView.setAdapter(observationAdapter);
+    }
+
     @Override
     public void onItemClick(BirdObservation birdObservation) {
         Intent i = new Intent(getContext(), ViewBirdObservationActivity.class);
@@ -71,6 +77,12 @@ public class FragmentNotableObservations extends Fragment implements IDisplayDat
         i.putExtra(BirdObservation.LATITUDE_EXTRA, birdObservation.getLatitude());
         i.putExtra(BirdObservation.LONGITUDE_EXTRA, birdObservation.getLongitude());
         i.putExtra(BirdObservation.OBSERVATION_DATE_EXTRA, birdObservation.getDate());
+        i.putExtra(BirdObservation.OBSERVATION_TIME_EXTRA, birdObservation.getTime());
+        i.putExtra(BirdObservation.HOW_MANY_EXTRA, birdObservation.getHowMany());
         this.startActivity(i);
+    }
+
+    public Geocoder getGeocoder() {
+        return new Geocoder(getContext());
     }
 }

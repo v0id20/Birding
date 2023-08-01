@@ -15,4 +15,7 @@
     <string name="choose_location">Choose Location To Start</string>
     <string name="location_access_disabled_in_settings">Location access is disabled in the settings</string>
     <string name="unable_to_retrieve_location">There was an issue with retrieving your current location, try again later.</string>
+    <string name="how_many">How many:</string>
+    <string name="seen_at">Seen at:</string>
+    <string name="location">Location:</string>
 </resources>

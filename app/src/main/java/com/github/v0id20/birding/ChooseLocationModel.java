@@ -79,7 +79,7 @@ public class ChooseLocationModel {
 
     private ArrayList<LocationRegion> convertResultToLocationRegionArrayList(ArrayList<LocationDto> locationDtoArrayList, LocationCountry parentCountry) {
         ArrayList<LocationRegion> result = new ArrayList<>();
-        result.add(new LocationRegion("All Regions", parentCountry.getLocationCode(), parentCountry));
+        result.add(new LocationRegion("all regions", parentCountry.getLocationCode(), parentCountry));
         for (LocationDto locationDto : locationDtoArrayList) {
             result.add(locationDto.mapLocationDto(parentCountry));
         }

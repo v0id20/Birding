@@ -10,6 +10,8 @@ public class BirdObservation extends BirdObservationItem {
     public static final String LATITUDE_EXTRA = "Latitude";
     public static final String LONGITUDE_EXTRA = "Longitude";
     public static final String OBSERVATION_DATE_EXTRA = "Observation date";
+    public static final String OBSERVATION_TIME_EXTRA = "Observation time";
+    public static final String HOW_MANY_EXTRA = "How many";
     private String commonName;
     private String scientificName;
     private String countryName;
@@ -18,6 +20,7 @@ public class BirdObservation extends BirdObservationItem {
     private String time;
     private String latitude;
     private String longitude;
+    private int howMany;
 
     public BirdObservation() {
     }
@@ -96,4 +99,11 @@ public class BirdObservation extends BirdObservationItem {
     }
 
 
+    public int getHowMany() {
+        return howMany;
+    }
+
+    public void setHowMany(int howMany) {
+        this.howMany = howMany;
+    }
 }

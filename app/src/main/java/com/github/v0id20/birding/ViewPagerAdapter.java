@@ -14,7 +14,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     int totalTabs;
 
     public ViewPagerAdapter(Context context, FragmentManager fm, int totalTabs, Bundle bundle) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         myContext = context;
         this.totalTabs = totalTabs;
         this.bundle = bundle;
@@ -24,13 +24,17 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                FragmentRecentObservations fragmentRecentObservations = new FragmentRecentObservations();
-                fragmentRecentObservations.setArguments(bundle);
+                FragmentObservations fragmentRecentObservations = new FragmentObservations();
+                Bundle bundleRecent = new Bundle(bundle);
+                bundleRecent.putString(ViewObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE, ViewObservationsListActivity.OBSERVATIONS_TYPE_RECENT);
+                fragmentRecentObservations.setArguments(bundleRecent);
                 return fragmentRecentObservations;
             case 1:
             default:
-                FragmentNotableObservations fragmentNotableObservations = new FragmentNotableObservations();
-                fragmentNotableObservations.setArguments(bundle);
+                FragmentObservations fragmentNotableObservations = new FragmentObservations();
+                Bundle bundleNotable = new Bundle(bundle);
+                bundleNotable.putString(ViewObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE, ViewObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE);
+                fragmentNotableObservations.setArguments(bundleNotable);
                 return fragmentNotableObservations;
         }
     }

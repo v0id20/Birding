@@ -12,6 +12,7 @@
     android:paddingEnd="32dp"
     android:gravity="center"
     android:textColor="@color/white"
+    android:fontFamily="lato"
     android:background="@drawable/oval_cyan"
     tools:text="keki liyutsya rekoyu"
     xmlns:app="http://schemas.android.com/apk/res-auto"

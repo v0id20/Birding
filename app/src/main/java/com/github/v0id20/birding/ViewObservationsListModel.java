@@ -203,6 +203,7 @@ public class ViewObservationsListModel {
         birdObservation.setLocationName(birdObservationDTO.getLocName());
         birdObservation.setLatitude(birdObservationDTO.getLat());
         birdObservation.setLongitude(birdObservationDTO.getLng());
+        birdObservation.setHowMany(birdObservationDTO.getHowMany());
         return birdObservation;
     }
 

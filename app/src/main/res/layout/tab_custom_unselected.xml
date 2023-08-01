@@ -12,6 +12,7 @@
     android:paddingTop="8dp"
     android:paddingEnd="32dp"
     android:paddingBottom="8dp"
+    android:fontFamily="lato"
     android:textColor="@color/yellow_500"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintTop_toTopOf="parent"

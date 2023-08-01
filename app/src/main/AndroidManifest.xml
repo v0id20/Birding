@@ -12,6 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Birding"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
 
         <activity
             android:name=".ChooseLocationActivity"
@@ -24,10 +31,11 @@
         </activity>
         <activity
             android:name=".ViewObservationsListActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".ViewBirdObservationActivity"
-            android:exported="false"></activity>
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="preloaded_fonts"

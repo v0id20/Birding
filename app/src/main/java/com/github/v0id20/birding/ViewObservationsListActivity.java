@@ -15,6 +15,7 @@ import com.google.android.material.tabs.TabLayout;
 public class ViewObservationsListActivity extends AppCompatActivity {
     public static final String OBSERVATIONS_TYPE_RECENT = "recent";
     public static final String OBSERVATIONS_TYPE_NOTABLE = "notable";
+    public static final String FRAGMENT_OBSERVATIONS_TYPE = "fragment";
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -42,7 +43,7 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         locationData.putDouble(BirdObservation.LONGITUDE_EXTRA, currentLongitude);
 
         tabLayout = findViewById(R.id.tabLayout);
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
 
         tabLayout.addTab(tabLayout.newTab().setText(R.string.recent));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.notable));
