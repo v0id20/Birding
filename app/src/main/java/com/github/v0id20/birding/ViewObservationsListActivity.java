@@ -42,8 +42,8 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         locationData.putDouble(BirdObservation.LATITUDE_EXTRA, currentLatitude);
         locationData.putDouble(BirdObservation.LONGITUDE_EXTRA, currentLongitude);
 
-        tabLayout = findViewById(R.id.tabLayout);
-        viewPager = findViewById(R.id.viewPager);
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.view_pager);
 
         tabLayout.addTab(tabLayout.newTab().setText(R.string.recent));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.notable));
@@ -53,7 +53,7 @@ public class ViewObservationsListActivity extends AppCompatActivity {
 
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        final ViewPagerAdapter adapter = new ViewPagerAdapter(this, getSupportFragmentManager(), tabLayout.getTabCount(), locationData);
+        final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), locationData);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new MyTabListener());
@@ -118,7 +118,6 @@ public class ViewObservationsListActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }
 

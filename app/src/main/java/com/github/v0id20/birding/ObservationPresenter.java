@@ -2,18 +2,9 @@ package com.github.v0id20.birding;
 
 import java.util.ArrayList;
 
-public class ObservationPresenter implements ObservationAdapter.OnObservationClickListener, ViewObservationsListModel.onApiResponseReceived, ViewObservationsListModel.onLocationsDecodedListener {
+public class ObservationPresenter implements ObservationAdapter.OnObservationClickListener, ViewObservationsListModel.onApiResponseReceived {
     private final ViewObservationsListModel viewObservationsListModel;
     private final IDisplayDataReceived displayDataObject;
-    private LocationDecoder locationDecoder;
-
-
-    public ObservationPresenter(IDisplayDataReceived displayDataObject, LocationDecoder locationDecoder) {
-        super();
-        viewObservationsListModel = new ViewObservationsListModel();
-        this.displayDataObject = displayDataObject;
-        this.locationDecoder = locationDecoder;
-    }
 
     public ObservationPresenter(IDisplayDataReceived displayDataObject) {
         super();
@@ -40,12 +31,7 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
 
     @Override
     public void onApiResponseReceived(ArrayList<BirdObservationItem> arrayList) {
-        if (locationDecoder != null) {
-            viewObservationsListModel.decodeLocations(locationDecoder, arrayList, this);
-        }
-    }
-
-    public void onLocationsDecoded(ArrayList<BirdObservationItem> arrayList) {
         updateContents(displayDataObject, arrayList);
     }
+
 }

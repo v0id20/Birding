@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class FragmentObservations extends Fragment implements IDisplayDataReceived, LocationDecoder {
+public class FragmentObservations extends Fragment implements IDisplayDataReceived {
     private ObservationPresenter observationPresenter;
     private ObservationAdapter observationAdapter;
     private RecyclerView recyclerView;
@@ -39,11 +39,13 @@ public class FragmentObservations extends Fragment implements IDisplayDataReceiv
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        observationPresenter = new ObservationPresenter(this, this);
-        observationAdapter = new ObservationAdapter(new ArrayList<>());
+        observationPresenter = new ObservationPresenter(this);
+        Decoder decoder = new Decoder(new Geocoder(view.getContext()));
+        observationAdapter = new ObservationAdapter(new ArrayList<>(), decoder);
+
         observationAdapter.setOnObservationClickListener(observationPresenter);
         recyclerView.addItemDecoration(new StickyHeader(recyclerView, observationAdapter));
-        loader = view.findViewById(R.id.loadingPanel);
+        loader = view.findViewById(R.id.loader);
         loader.setVisibility(View.VISIBLE);
         String regionCode = getArguments().getString(BirdObservation.REGION_CODE_EXTRA);
         String countryName = getArguments().getString(BirdObservation.COUNTRY_NAME_EXTRA);
@@ -76,13 +78,11 @@ public class FragmentObservations extends Fragment implements IDisplayDataReceiv
         i.putExtra(BirdObservation.LOCATION_NAME_EXTRA, birdObservation.getLocationName());
         i.putExtra(BirdObservation.LATITUDE_EXTRA, birdObservation.getLatitude());
         i.putExtra(BirdObservation.LONGITUDE_EXTRA, birdObservation.getLongitude());
-        i.putExtra(BirdObservation.OBSERVATION_DATE_EXTRA, birdObservation.getDate());
+        i.putExtra(BirdObservation.OBSERVATION_DATE_EXTRA, birdObservation.getObservationDate());
         i.putExtra(BirdObservation.OBSERVATION_TIME_EXTRA, birdObservation.getTime());
         i.putExtra(BirdObservation.HOW_MANY_EXTRA, birdObservation.getHowMany());
         this.startActivity(i);
     }
 
-    public Geocoder getGeocoder() {
-        return new Geocoder(getContext());
-    }
+
 }

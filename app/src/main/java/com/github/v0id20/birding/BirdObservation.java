@@ -21,17 +21,9 @@ public class BirdObservation extends BirdObservationItem {
     private String latitude;
     private String longitude;
     private int howMany;
+    private boolean locationDecoded;
 
     public BirdObservation() {
-    }
-
-
-    public String getDate() {
-        return observationDate;
-    }
-
-    public void setDate(String date) {
-        observationDate = date;
     }
 
     public String getTime() {
@@ -78,10 +70,6 @@ public class BirdObservation extends BirdObservationItem {
         return subnational1Name;
     }
 
-    public void setSubnational1Name(String subnational1Name) {
-        this.subnational1Name = subnational1Name;
-    }
-
     public String getLatitude() {
         return latitude;
     }
@@ -98,12 +86,19 @@ public class BirdObservation extends BirdObservationItem {
         this.longitude = longitude;
     }
 
-
     public int getHowMany() {
         return howMany;
     }
 
     public void setHowMany(int howMany) {
         this.howMany = howMany;
+    }
+
+    public boolean isLocationDecoded() {
+        return locationDecoded;
+    }
+
+    public void setLocationDecoded(boolean locationDecoded) {
+        this.locationDecoded = locationDecoded;
     }
 }

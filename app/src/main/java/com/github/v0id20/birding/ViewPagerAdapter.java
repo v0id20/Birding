@@ -1,6 +1,5 @@
 package com.github.v0id20.birding;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,14 +7,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-
-    private final Context myContext;
     private final Bundle bundle;
-    int totalTabs;
+    private final int totalTabs;
 
-    public ViewPagerAdapter(Context context, FragmentManager fm, int totalTabs, Bundle bundle) {
+    public ViewPagerAdapter(FragmentManager fm, int totalTabs, Bundle bundle) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        myContext = context;
         this.totalTabs = totalTabs;
         this.bundle = bundle;
     }

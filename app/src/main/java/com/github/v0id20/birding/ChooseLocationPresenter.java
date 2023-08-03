@@ -15,12 +15,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 
 public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocationClickListener, ChooseLocationAdapter.OnRegionClickListener, ChooseLocationAdapter.OnCountryClickListener {
-    private FusedLocationProviderClient fusedLocationClient;
+    private final FusedLocationProviderClient fusedLocationClient;
     private final ChooseLocationView chooseLocationView;
     private final ChooseLocationModel chooseLocationModel;
 
-    public ChooseLocationPresenter(ChooseLocationView chooseLocationView) {
+    public ChooseLocationPresenter(ChooseLocationView chooseLocationView, FusedLocationProviderClient fusedLocationProviderClient) {
         this.chooseLocationView = chooseLocationView;
+        this.fusedLocationClient = fusedLocationProviderClient;
         chooseLocationModel = new ChooseLocationModel();
     }
 
@@ -82,9 +83,9 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
         }
     }
 
+
     @SuppressLint("MissingPermission")
     public void getLastOrCurrentLocation() {
-        fusedLocationClient = chooseLocationView.getFusedLocationProviderClient();
         fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {

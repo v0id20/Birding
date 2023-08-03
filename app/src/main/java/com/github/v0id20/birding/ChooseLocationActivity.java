@@ -10,12 +10,12 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -30,9 +30,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 
 public class ChooseLocationActivity extends AppCompatActivity implements ChooseLocationView {
-
     public static final int REQUEST_CODE = 231;
-    public static final String googlemapskey = "AIzaSyC1iLNxnwwxOoWnk5rhpYVdscynweAY05k";
     private ConstraintLayout constraintLayout;
     private RecyclerView recyclerView;
     private ProgressBar loader;
@@ -40,20 +38,18 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     private ChooseLocationAdapter chooseLocationAdapter;
     private ChooseLocationPresenter chooseLocationPresenter;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_location);
-        TextView chooseLocationTV = findViewById(R.id.choose_location_tv);
-        chooseLocationTV.setText(R.string.choose_location);
         loader = findViewById(R.id.loader);
-        loader.setVisibility(View.VISIBLE);
+        constraintLayout = findViewById(R.id.constraint_layout);
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chooseLocationPresenter = new ChooseLocationPresenter(this);
+        FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
+        chooseLocationPresenter = new ChooseLocationPresenter(this, flpc);
         chooseLocationPresenter.requestLocationData();
-        constraintLayout = findViewById(R.id.constraint_layout);
+
         //Photo by <a href="https://unsplash.com/@brunus?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Bruno Martins</a> on <a href="https://unsplash.com/photos/BYY_rYlZOkI?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
         ActivityResultContracts.StartActivityForResult contract = new ActivityResultContracts.StartActivityForResult();
         launcher = registerForActivityResult(contract, new ActivityResultCallback<ActivityResult>() {
@@ -67,27 +63,9 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         chooseLocationPresenter.onRequestPermissionResult(requestCode, grantResults);
-    }
-
-    public void showEnableGpsDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle(R.string.gps_settings);
-        alertDialog.setMessage(R.string.gps_settings_message);
-        alertDialog.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                launcher.launch(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            }
-        });
-        alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                showSnack(constraintLayout, R.string.error_cant_retrieve_obs_without_location_on, 5000);
-            }
-        });
-        alertDialog.show();
     }
 
     private void showSnack(View view, int stringResourceId, int duration) {
@@ -99,6 +77,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         loader.setVisibility(View.GONE);
     }
 
+    @Override
     public void requestLocationPermission() {
         requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
     }
@@ -114,6 +93,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         chooseLocationAdapter.setOnCountryClickListener(chooseLocationPresenter);
     }
 
+    @Override
     public void displayRegionListReceived(ArrayList<LocationRegion> locationList, int position) {
         chooseLocationAdapter.bind(locationList, position);
     }
@@ -140,14 +120,33 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         return (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
     }
 
-    public FusedLocationProviderClient getFusedLocationProviderClient() {
-        return LocationServices.getFusedLocationProviderClient(this);
-    }
 
+    @Override
     public boolean checkLocationPermissionGranted() {
         return ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
+    @Override
+    public void showEnableGpsDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle(R.string.gps_settings);
+        alertDialog.setMessage(R.string.gps_settings_message);
+        alertDialog.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                launcher.launch(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+        });
+        alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                showSnack(constraintLayout, R.string.error_cant_retrieve_obs_without_location_on, 5000);
+            }
+        });
+        alertDialog.show();
+    }
+
+
+    @Override
     public void showLocationDisabledToast() {
         showSnack(constraintLayout, R.string.location_access_disabled_in_settings, 5000);
     }

@@ -11,12 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeader.StickyHeaderInterface {
-    ArrayList<BirdObservationItem> birdObservationArrayList;
-    OnObservationClickListener onObservationClickListener;
+public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeader.StickyHeaderInterface, ViewObservationsListModel.onLocationsDecodedListener {
 
-    public ObservationAdapter(ArrayList<BirdObservationItem> birdObservationArrayList) {
+    private ArrayList<BirdObservationItem> birdObservationArrayList;
+    private OnObservationClickListener onObservationClickListener;
+    private final Decoder decoder;
+
+    public ObservationAdapter(ArrayList<BirdObservationItem> birdObservationArrayList, Decoder decoder) {
         this.birdObservationArrayList = birdObservationArrayList;
+        this.decoder = decoder;
+        decoder.setOnLocationsDecodedListener(this);
     }
 
     public void setOnObservationClickListener(OnObservationClickListener onObservationClickListener) {
@@ -52,11 +56,16 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == 1) {
-            BirdObservation birdObservationItem = (BirdObservation) birdObservationArrayList.get(position);
-            ((ObservationAdapter.ObservationViewHolder) holder).timeTV.setText(birdObservationItem.getTime());
-            ((ObservationAdapter.ObservationViewHolder) holder).commonNameTV.setText(birdObservationItem.getCommonName());
-            ((ObservationAdapter.ObservationViewHolder) holder).sciNameTV.setText(birdObservationItem.getScientificName());
-            ((ObservationAdapter.ObservationViewHolder) holder).locationTV.setText(birdObservationItem.getLocationName());
+            BirdObservation birdObservation = (BirdObservation) birdObservationArrayList.get(position);
+            ((ObservationAdapter.ObservationViewHolder) holder).timeTV.setText(birdObservation.getTime());
+            ((ObservationAdapter.ObservationViewHolder) holder).commonNameTV.setText(birdObservation.getCommonName());
+            ((ObservationAdapter.ObservationViewHolder) holder).sciNameTV.setText(birdObservation.getScientificName());
+            if (birdObservation.isLocationDecoded()) {
+                ((ObservationAdapter.ObservationViewHolder) holder).locationTV.setText(birdObservation.getLocationName());
+            } else {
+                ((ObservationAdapter.ObservationViewHolder) holder).locationTV.setText("");
+                decoder.decodeLocation(birdObservation, position);
+            }
         } else if (holder.getItemViewType() == 2) {
             BirdObservationDate birdObservationItem = (BirdObservationDate) birdObservationArrayList.get(position);
             ((DateObservationViewHolder) holder).dateTV.setText(birdObservationItem.getObservationDate());
@@ -111,6 +120,23 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
     @Override
     public boolean isHeader(int itemPosition) {
         return birdObservationArrayList.get(itemPosition) instanceof BirdObservationDate;
+    }
+
+    @Override
+    public void onLocationDecoded(String newAddress, int position) {
+        if (birdObservationArrayList.get(position) instanceof BirdObservation) {
+            ((BirdObservation) birdObservationArrayList.get(position)).setLocationName(newAddress);
+            ((BirdObservation) birdObservationArrayList.get(position)).setLocationDecoded(true);
+            this.notifyItemChanged(position);
+        }
+    }
+
+    @Override
+    public void onLocationDecodingFailure(int position) {
+        if (birdObservationArrayList.get(position) instanceof BirdObservation) {
+            ((BirdObservation) birdObservationArrayList.get(position)).setLocationDecoded(true);
+            this.notifyItemChanged(position);
+        }
     }
 
     public class ObservationViewHolder extends RecyclerView.ViewHolder {
