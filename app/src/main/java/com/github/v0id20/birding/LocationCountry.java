@@ -1,29 +1,30 @@
 package com.github.v0id20.birding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class LocationCountry extends MyLocation {
-    private int viewType;
+    enum LoadingState {ERROR, SUCCESS, LOADING, VOID}
+
+    private LoadingState loadingState;
     private boolean expanded;
-    private ArrayList<LocationRegion> subRegions;
+    private ArrayList<LocationRegion> subRegions = new ArrayList(Arrays.asList(new LocationRegion("All Regions", this.getLocationCode(), this)));
 
-    public int getViewType() {
-        return viewType;
-    }
-
-    public void setViewType(Integer viewType) {
-        this.viewType = viewType;
-    }
-
-
-    public LocationCountry(int viewType, String location) {
+    public LocationCountry(String location) {
         super(location, null);
-        this.viewType = viewType;
     }
 
-    public LocationCountry(int viewType, String location, String locationCode) {
+    public LocationCountry(String location, String locationCode) {
         super(location, locationCode);
-        this.viewType = viewType;
+    }
+
+    public void setLoadingState(LoadingState state) {
+        loadingState = state;
+    }
+
+    public LoadingState getLoadingState() {
+        return loadingState;
     }
 
     public boolean isExpanded() {

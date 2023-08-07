@@ -26,8 +26,19 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
     }
 
     public void requestLocationData() {
-        chooseLocationModel.requestCountriesList(locationList -> onCountriesListReceived(locationList));
+        chooseLocationModel.requestCountriesList(new ChooseLocationModel.OnRequestResultCallback<LocationCountry>() {
+            @Override
+            public void onRequestResult(ArrayList<LocationCountry> locationList) {
+                onCountriesListReceived(locationList);
+            }
+
+            @Override
+            public void onRequestFailure() {
+                onErrorOccurred();
+            }
+        });
     }
+
 
     private void onCountriesListReceived(ArrayList<LocationCountry> locationList) {
         chooseLocationView.displayCountriesListReceived(locationList);
@@ -66,10 +77,15 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
     }
 
     public void onCountryClick(LocationCountry country, int position) {
-        ChooseLocationModel.OnRequestRegionResultCallback khh = new ChooseLocationModel.OnRequestRegionResultCallback() {
+        ChooseLocationModel.OnRequestResultCallback<LocationRegion> khh = new ChooseLocationModel.OnRequestResultCallback<LocationRegion>() {
             @Override
-            public void onRequestRegionResult(ArrayList<LocationRegion> locationList) {
+            public void onRequestResult(ArrayList<LocationRegion> locationList) {
                 onRegionListReceived(locationList, position);
+            }
+
+            @Override
+            public void onRequestFailure() {
+                setRegionDataErrorState(position);
             }
         };
         chooseLocationModel.requestSubnationalRegionsList(country, khh);
@@ -104,6 +120,11 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
         });
     }
 
+    public void retryLocationDataRequest() {
+        chooseLocationView.setLoadingState();
+        requestLocationData();
+    }
+
     public class OnRetrieveLocationListener implements OnFailureListener, OnSuccessListener<Location> {
         @Override
         public void onFailure(@NonNull Exception e) {
@@ -117,6 +138,14 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
                 chooseLocationView.onMyLocationClick(location.getLatitude(), location.getLongitude());
             }
         }
+    }
+
+    private void onErrorOccurred() {
+        chooseLocationView.setCountriesLoadingErrorState();
+    }
+
+    private void setRegionDataErrorState(int position) {
+        chooseLocationView.setRegionsLoadingErrorState(position);
     }
 
 }

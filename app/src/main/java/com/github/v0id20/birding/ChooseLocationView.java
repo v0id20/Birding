@@ -25,4 +25,10 @@ public interface ChooseLocationView {
 
     void showUnableToGetLocationToast();
 
+    void setCountriesLoadingErrorState();
+
+    void setRegionsLoadingErrorState(int position);
+
+    void setLoadingState();
+
 }

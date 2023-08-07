@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:background="?android:attr/selectableItemBackground">
 
     <androidx.cardview.widget.CardView
@@ -101,7 +100,5 @@
                 tools:text="Sheffield but actually ot is a very long name so that it does not fit here" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

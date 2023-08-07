@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +19,7 @@ public class ChooseLocationAdapter extends RecyclerView.Adapter {
     private OnRegionClickListener onRegionClickListener;
     private OnMyLocationClickListener onMyLocationClickListener;
     private OnCountryClickListener onCountryClickListener;
-    private int lasClickedLocationPos = -1;
+    private int lastClickedLocationPos = -1;
     private RecyclerView myRecyclerView;
 
     public void setOnMyLocationClickListener(OnMyLocationClickListener onMyLocationClickListener) {
@@ -49,25 +50,29 @@ public class ChooseLocationAdapter extends RecyclerView.Adapter {
             return viewHolder;
         } else {
             View itemView = inflater.inflate(R.layout.item_location_country, parent, false);
-            ChooseLocationAdapter.ChosenLocationViewHolder viewHolder = new ChooseLocationAdapter.ChosenLocationViewHolder(itemView);
+            CountryViewHolder viewHolder = new CountryViewHolder(itemView);
             viewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(viewHolder.itemView.getContext()));
             viewHolder.regionAdapter = new RegionAdapter();
             viewHolder.recyclerView.setAdapter(viewHolder.regionAdapter);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (lasClickedLocationPos != -1 && lasClickedLocationPos != viewHolder.getAdapterPosition()) {
-                        (countryArrayList.get(lasClickedLocationPos)).setExpanded(false);
-                        ChooseLocationAdapter.this.notifyItemChanged(lasClickedLocationPos);
+                    int currentAdapterPosition = viewHolder.getAdapterPosition();
+                    if (lastClickedLocationPos != -1) {
+                        (countryArrayList.get(lastClickedLocationPos)).setExpanded(false);
+                        ChooseLocationAdapter.this.notifyItemChanged(lastClickedLocationPos);
                     }
-                    int clickedLocationAdapterPosition = viewHolder.getAdapterPosition();
-                    LocationCountry clickedLocationCountry = countryArrayList.get(clickedLocationAdapterPosition);
-                    boolean isExpanded = !clickedLocationCountry.isExpanded();
-                    clickedLocationCountry.setExpanded(isExpanded);
-                    ChooseLocationAdapter.this.notifyItemChanged(clickedLocationAdapterPosition);
-                    onCountryClickListener.onCountryClick(clickedLocationCountry, clickedLocationAdapterPosition);
-                    lasClickedLocationPos = clickedLocationAdapterPosition;
-                    myRecyclerView.scrollToPosition(viewHolder.getAdapterPosition());
+                    if (currentAdapterPosition != lastClickedLocationPos) {
+                        LocationCountry clickedLocationCountry = countryArrayList.get(currentAdapterPosition);
+                        boolean isExpanded = !clickedLocationCountry.isExpanded();
+                        clickedLocationCountry.setExpanded(isExpanded);
+                        onCountryClickListener.onCountryClick(clickedLocationCountry, currentAdapterPosition);
+                        myRecyclerView.scrollToPosition(viewHolder.getAdapterPosition());
+                        lastClickedLocationPos = currentAdapterPosition;
+
+                    } else {
+                        lastClickedLocationPos = -1;
+                    }
                 }
             });
             return viewHolder;
@@ -89,21 +94,36 @@ public class ChooseLocationAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == 1) {
-            ((ChooseLocationAdapter.MyLocationViewHolder) holder).myLocation.setText(countryArrayList.get(position).getLocationName());
-            ((MyLocationViewHolder) holder).myLocationIcon.setImageResource(R.drawable.ic_my_location);
+            ((MyLocationViewHolder) holder).myLocation.setText(countryArrayList.get(position).getLocationName());
         } else {
             LocationCountry aCountry = countryArrayList.get(position);
+            CountryViewHolder countryViewHolder = (CountryViewHolder) holder;
+            countryViewHolder.location.setText(aCountry.getLocationName());
             if (aCountry.isExpanded()) {
-                ((ChooseLocationAdapter.ChosenLocationViewHolder) holder).location.setText(aCountry.getLocationName());
-                if (aCountry.getSubRegions() != null) {
-                    ((ChosenLocationViewHolder) holder).regionAdapter.setRegionList(aCountry.getSubRegions());
-                    ((ChosenLocationViewHolder) holder).regionAdapter.setOnChosenLocationClickListener(onRegionClickListener);
-                    ((ChosenLocationViewHolder) holder).regionAdapter.notifyDataSetChanged();
+                countryViewHolder.expandable.setVisibility(View.VISIBLE);
+                switch (countryArrayList.get(position).getLoadingState()) {
+                    case ERROR:
+
+                        if (countryViewHolder.regionAdapter.getRegionList() != null) {
+                            countryViewHolder.regionAdapter.setRegionList(aCountry.getSubRegions());
+                            countryViewHolder.regionAdapter.setOnChosenLocationClickListener(onRegionClickListener);
+                            countryViewHolder.regionAdapter.notifyItemChanged(position);
+                        }
+                        break;
+                    case SUCCESS:
+                        if (aCountry.getSubRegions() != null) {
+                            countryViewHolder.regionAdapter.setRegionList(aCountry.getSubRegions());
+                            countryViewHolder.regionAdapter.setOnChosenLocationClickListener(onRegionClickListener);
+                            countryViewHolder.regionAdapter.notifyItemChanged(position);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             } else {
-                ((ChooseLocationAdapter.ChosenLocationViewHolder) holder).location.setText(aCountry.getLocationName());
-                ((ChosenLocationViewHolder) holder).regionAdapter.setRegionList(new ArrayList<>());
-                ((ChosenLocationViewHolder) holder).regionAdapter.notifyDataSetChanged();
+                countryViewHolder.expandable.setVisibility(View.GONE);
+                countryViewHolder.regionAdapter.setRegionList(new ArrayList<>());
+                countryViewHolder.regionAdapter.notifyItemChanged(position);
             }
         }
     }
@@ -114,7 +134,13 @@ public class ChooseLocationAdapter extends RecyclerView.Adapter {
     }
 
     public void bind(ArrayList<LocationRegion> locationDataArrayList, int position) {
+        countryArrayList.get(position).setLoadingState(LocationCountry.LoadingState.SUCCESS);
         (countryArrayList.get(position)).setSubRegions(locationDataArrayList);
+        ChooseLocationAdapter.this.notifyItemChanged(position);
+    }
+
+    public void setViewHolderErrorState(int position) {
+        countryArrayList.get(position).setLoadingState(LocationCountry.LoadingState.ERROR);
         ChooseLocationAdapter.this.notifyItemChanged(position);
     }
 
@@ -124,6 +150,10 @@ public class ChooseLocationAdapter extends RecyclerView.Adapter {
         } else {
             return 2;
         }
+    }
+
+    public void refreshRegionList(int position) {
+        onCountryClickListener.onCountryClick(countryArrayList.get(position), position);
     }
 
     public static class MyLocationViewHolder extends RecyclerView.ViewHolder {
@@ -138,15 +168,17 @@ public class ChooseLocationAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public static class ChosenLocationViewHolder extends RecyclerView.ViewHolder {
+    public static class CountryViewHolder extends RecyclerView.ViewHolder {
         TextView location;
         RecyclerView recyclerView;
+        ConstraintLayout expandable;
         RegionAdapter regionAdapter;
 
-        public ChosenLocationViewHolder(@NonNull View itemView) {
+        public CountryViewHolder(@NonNull View itemView) {
             super(itemView);
             location = itemView.findViewById(R.id.item_location);
             recyclerView = itemView.findViewById(R.id.recycler_view);
+            expandable = itemView.findViewById(R.id.expandable);
         }
     }
 

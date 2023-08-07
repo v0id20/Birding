@@ -6,50 +6,100 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/photo"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top_card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:src="@drawable/papug_3"
-        android:scaleType="fitStart"
-        app:layout_constraintBottom_toTopOf="@id/choose_location"
+        android:background="@drawable/background_white_rounded_corners"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toTopOf="@id/recycler_view"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="0.3" />
+        app:layout_constraintVertical_weight="0.4">
 
-    <TextView
-        android:id="@+id/choose_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/roboto_medium"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/recycler_view"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/photo"
-        android:text="@string/choose_location"
-        tools:text="Choose location to start"
-        app:layout_constraintVertical_weight="0.1" />
+        <ImageView
+            android:id="@+id/photo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/papug_3"
+            app:layout_constraintBottom_toTopOf="@id/choose_location"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/choose_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/choose_location"
+
+         style="@style/TextAppearance.MdcTypographyStyles.Overline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/photo"
+            tools:text="Choose location to start" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/choose_location"
-        app:layout_constraintVertical_weight="0.5" />
+        app:layout_constraintTop_toBottomOf="@id/top_card"
+        app:layout_constraintVertical_weight="0.6" />
 
     <ProgressBar
         android:id="@+id/loader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/top_card" />
+
+    <ImageView
+        android:id="@+id/error_icon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/noun_loading_failed_1856610"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_card" />
+    <!-- loading failed by Sophia from <a href="https://thenounproject.com/browse/icons/term/loading-failed/" target="_blank" title="loading failed Icons">Noun Project</a> (CC BY 3.0)-->
+
+    <TextView
+        android:id="@+id/error_text"
+        style="@style/TextAppearance.MdcTypographyStyles.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/could_not_load_data"
+        android:textColor="@color/grey_600"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_icon" />
+
+    <TextView
+        android:id="@+id/try_again"
+        style="@style/TextAppearance.MdcTypographyStyles.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/try_again"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

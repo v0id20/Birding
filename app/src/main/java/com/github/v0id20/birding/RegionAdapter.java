@@ -20,6 +20,10 @@ public class RegionAdapter extends RecyclerView.Adapter {
         this.onRegionClickListener = onCountryClickListener;
     }
 
+    public ArrayList<LocationRegion> getRegionList() {
+        return regionList;
+    }
+
     public void setRegionList(ArrayList<LocationRegion> regionList) {
         this.regionList = regionList;
     }

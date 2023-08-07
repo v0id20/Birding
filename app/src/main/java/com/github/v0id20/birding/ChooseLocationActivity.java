@@ -9,7 +9,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -34,6 +36,9 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     private ConstraintLayout constraintLayout;
     private RecyclerView recyclerView;
     private ProgressBar loader;
+    private ImageView errorIcon;
+    private TextView errorText;
+    private TextView tryAgain;
     private ActivityResultLauncher<Intent> launcher;
     private ChooseLocationAdapter chooseLocationAdapter;
     private ChooseLocationPresenter chooseLocationPresenter;
@@ -43,6 +48,9 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_location);
         loader = findViewById(R.id.loader);
+        errorIcon = findViewById(R.id.error_icon);
+        errorText = findViewById(R.id.error_text);
+        tryAgain = findViewById(R.id.try_again);
         constraintLayout = findViewById(R.id.constraint_layout);
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -68,8 +76,8 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         chooseLocationPresenter.onRequestPermissionResult(requestCode, grantResults);
     }
 
-    private void showSnack(View view, int stringResourceId, int duration) {
-        Snackbar snackbar = Snackbar.make(view, stringResourceId, duration);
+    private void showSnack(int stringResourceId, int duration) {
+        Snackbar snackbar = Snackbar.make(constraintLayout, stringResourceId, duration);
         snackbar.show();
     }
 
@@ -139,7 +147,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                showSnack(constraintLayout, R.string.error_cant_retrieve_obs_without_location_on, 5000);
+                showSnack(R.string.error_cant_retrieve_obs_without_location_on, 5000);
             }
         });
         alertDialog.show();
@@ -148,11 +156,48 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
 
     @Override
     public void showLocationDisabledToast() {
-        showSnack(constraintLayout, R.string.location_access_disabled_in_settings, 5000);
+        showSnack(R.string.location_access_disabled_in_settings, 5000);
     }
 
     @Override
     public void showUnableToGetLocationToast() {
-        showSnack(constraintLayout, R.string.location_access_disabled_in_settings, 5000);
+        showSnack(R.string.location_access_disabled_in_settings, 5000);
     }
+
+    @Override
+    public void setCountriesLoadingErrorState() {
+        loader.setVisibility(View.GONE);
+        errorText.setVisibility(View.VISIBLE);
+        errorIcon.setVisibility(View.VISIBLE);
+        tryAgain.setVisibility(View.VISIBLE);
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chooseLocationPresenter.retryLocationDataRequest();
+            }
+        });
+    }
+
+    @Override
+    public void setLoadingState() {
+        loader.setVisibility(View.VISIBLE);
+        errorIcon.setVisibility(View.GONE);
+        errorText.setVisibility(View.GONE);
+        tryAgain.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void setRegionsLoadingErrorState(int position) {
+        chooseLocationAdapter.setViewHolderErrorState(position);
+        Snackbar s = Snackbar.make(constraintLayout, R.string.could_not_load_regions_for_this_country_try_again, 7000);
+        s.setAction(R.string.try_again, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chooseLocationAdapter.refreshRegionList(position);
+                s.dismiss();
+            }
+        });
+        s.show();
+    }
+
 }

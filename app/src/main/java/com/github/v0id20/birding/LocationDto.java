@@ -22,7 +22,7 @@ public class LocationDto {
     }
 
     public LocationCountry mapLocationDto() {
-        return new LocationCountry(2, this.getName(), this.getCode());
+        return new LocationCountry(this.getName(), this.getCode());
     }
 
     public LocationRegion mapLocationDto(LocationCountry country) {

@@ -29,27 +29,11 @@ public class ChooseLocationModel {
         }
     }
 
-    public void requestSubnationalRegionsList(LocationCountry country, OnRequestRegionResultCallback callback) {
+    public void requestSubnationalRegionsList(LocationCountry country, OnRequestResultCallback callback) {
         Call<ArrayList<LocationDto>> call = myApi.getLocationsList(REGION_TYPE_SUBNATIONAL1, country.getLocationCode(), apiKey);
         if (call != null) {
             sendRegionQuery(call, callback, country);
         }
-    }
-
-    private void sendRegionQuery(Call<ArrayList<LocationDto>> call, OnRequestRegionResultCallback callback, LocationCountry country) {
-        call.enqueue(new Callback<ArrayList<LocationDto>>() {
-            @Override
-            public void onResponse(Call<ArrayList<LocationDto>> call, Response<ArrayList<LocationDto>> response) {
-                apiResponse = response.body();
-                ArrayList<LocationRegion> locationList = convertResultToLocationRegionArrayList(apiResponse, country);
-                callback.onRequestRegionResult(locationList);
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<LocationDto>> call, Throwable t) {
-                Log.d("LocationModel", "onFailure: was not able to retrieve subnational regions data", t);
-            }
-        });
     }
 
     private void sendCountryQuery(Call<ArrayList<LocationDto>> call, OnRequestResultCallback callback) {
@@ -58,19 +42,37 @@ public class ChooseLocationModel {
             public void onResponse(Call<ArrayList<LocationDto>> call, Response<ArrayList<LocationDto>> response) {
                 apiResponse = response.body();
                 ArrayList<LocationCountry> locationList = convertResultToLocationCountryArrayList(apiResponse);
-                callback.onRequestCountryResult(locationList);
+                callback.onRequestResult(locationList);
             }
 
             @Override
             public void onFailure(Call<ArrayList<LocationDto>> call, Throwable t) {
                 Log.d("LocationModel", "onFailure: was not able to retrieve country data", t);
+                callback.onRequestFailure();
+            }
+        });
+    }
+
+    private void sendRegionQuery(Call<ArrayList<LocationDto>> call, OnRequestResultCallback callback, LocationCountry country) {
+        call.enqueue(new Callback<ArrayList<LocationDto>>() {
+            @Override
+            public void onResponse(Call<ArrayList<LocationDto>> call, Response<ArrayList<LocationDto>> response) {
+                apiResponse = response.body();
+                ArrayList<LocationRegion> locationList = convertResultToLocationRegionArrayList(apiResponse, country);
+                callback.onRequestResult(locationList);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<LocationDto>> call, Throwable t) {
+                Log.d("LocationModel", "onFailure: was not able to retrieve subnational regions data", t);
+                callback.onRequestFailure();
             }
         });
     }
 
     private ArrayList<LocationCountry> convertResultToLocationCountryArrayList(ArrayList<LocationDto> locationDtoArrayList) {
         ArrayList<LocationCountry> result = new ArrayList<>();
-        result.add(0, new LocationCountry(1, "My Location"));
+        result.add(0, new LocationCountry("My Location"));
         for (LocationDto locationDto : locationDtoArrayList) {
             result.add(locationDto.mapLocationDto());
         }
@@ -79,18 +81,17 @@ public class ChooseLocationModel {
 
     private ArrayList<LocationRegion> convertResultToLocationRegionArrayList(ArrayList<LocationDto> locationDtoArrayList, LocationCountry parentCountry) {
         ArrayList<LocationRegion> result = new ArrayList<>();
-        result.add(new LocationRegion("all regions", parentCountry.getLocationCode(), parentCountry));
+        result.add(new LocationRegion("All Regions", parentCountry.getLocationCode(), parentCountry));
         for (LocationDto locationDto : locationDtoArrayList) {
             result.add(locationDto.mapLocationDto(parentCountry));
         }
         return result;
     }
 
-    public interface OnRequestResultCallback {
-        void onRequestCountryResult(ArrayList<LocationCountry> locationList);
+    public interface OnRequestResultCallback<T> {
+        void onRequestResult(ArrayList<T> locationList);
+
+        void onRequestFailure();
     }
 
-    public interface OnRequestRegionResultCallback {
-        void onRequestRegionResult(ArrayList<LocationRegion> locationList);
-    }
 }
