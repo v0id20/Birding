@@ -1,6 +1,12 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.viewobservationslist;
 
 import android.util.Log;
+
+import com.github.v0id20.birding.BirdObservation;
+import com.github.v0id20.birding.BirdObservationDTO;
+import com.github.v0id20.birding.BirdObservationDate;
+import com.github.v0id20.birding.BirdObservationItem;
+import com.github.v0id20.birding.MyApiEndpointInterface;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,8 +71,9 @@ public class ViewObservationsListModel {
 
             @Override
             public void onFailure(Call<ArrayList<BirdObservationDTO>> call, Throwable t) {
-                onApiResponse.onApiResponseReceived(birdObservationsData);
-                System.out.println("Error");
+                onApiResponse.onErrorOccurred();
+                Log.d(TAG, "onFailure:", t);
+
             }
         });
     }
@@ -129,11 +136,12 @@ public class ViewObservationsListModel {
 
     public interface onApiResponseReceived {
         void onApiResponseReceived(ArrayList<BirdObservationItem> apiResponse);
+
+        void onErrorOccurred();
     }
 
     public interface onLocationsDecodedListener {
         void onLocationDecoded(String newAddress, int position);
-
         void onLocationDecodingFailure(int position);
     }
 

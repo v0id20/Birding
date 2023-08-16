@@ -23,9 +23,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/expandable"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="visible"
+        android:layout_height="match_parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_location">
 

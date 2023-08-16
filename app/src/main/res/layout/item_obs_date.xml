@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="0dp">
+
 
     <TextView
         android:id="@+id/obs_date"
+        style="@style/TextAppearance.MdcTypographyStyles.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12sp"
         android:layout_marginStart="16dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/oval_white_10"
+        android:elevation="4dp"
+        android:padding="12dp"
         android:textColor="@color/black"
-        android:fontFamily="lato"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="12 June" />
 

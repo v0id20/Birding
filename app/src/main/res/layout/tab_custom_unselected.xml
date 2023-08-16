@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@android:id/text1"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/oval_white_10"
-    android:gravity="center"
-    android:layout_marginTop="16dp"
-    android:paddingStart="32dp"
-    android:paddingTop="8dp"
-    android:paddingEnd="32dp"
-    android:paddingBottom="8dp"
-    android:fontFamily="lato"
-    android:textColor="@color/yellow_500"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    tools:text="keki liyutsya rekoyu" />
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@android:id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/oval_white_10"
+        android:fontFamily="@font/lato"
+        android:gravity="center"
+        android:paddingStart="32dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="32dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/cyan_500"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="notable" />
+</androidx.constraintlayout.widget.ConstraintLayout>
 

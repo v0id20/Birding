@@ -1,11 +1,11 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.mylocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
 public class LocationCountry extends MyLocation {
-    enum LoadingState {ERROR, SUCCESS, LOADING, VOID}
+    public enum LoadingState {ERROR, SUCCESS, LOADING, VOID}
 
     private LoadingState loadingState;
     private boolean expanded;

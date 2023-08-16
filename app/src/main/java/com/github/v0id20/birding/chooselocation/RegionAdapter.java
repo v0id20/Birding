@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.chooselocation;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.github.v0id20.birding.mylocation.LocationRegion;
+import com.github.v0id20.birding.R;
 
 import java.util.ArrayList;
 

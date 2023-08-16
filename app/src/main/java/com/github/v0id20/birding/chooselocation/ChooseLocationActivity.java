@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.chooselocation;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -25,8 +24,14 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.v0id20.birding.BirdObservation;
+import com.github.v0id20.birding.mylocation.LocationCountry;
+import com.github.v0id20.birding.mylocation.LocationRegion;
+import com.github.v0id20.birding.R;
+import com.github.v0id20.birding.viewobservationslist.ViewObservationsListActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -35,7 +40,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     public static final int REQUEST_CODE = 231;
     private ConstraintLayout constraintLayout;
     private RecyclerView recyclerView;
-    private ProgressBar loader;
+    private CircularProgressIndicator loader;
     private ImageView errorIcon;
     private TextView errorText;
     private TextView tryAgain;
@@ -94,6 +99,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     public void displayCountriesListReceived(ArrayList<LocationCountry> locationDataArrayList) {
         hideLoader();
         chooseLocationAdapter = new ChooseLocationAdapter();
+        chooseLocationAdapter.setColors(getResources().getColor(R.color.cyan_300), getResources().getColor(R.color.black));
         chooseLocationAdapter.setCountryArrayList(locationDataArrayList);
         recyclerView.setAdapter(chooseLocationAdapter);
         chooseLocationAdapter.setOnMyLocationClickListener(chooseLocationPresenter);

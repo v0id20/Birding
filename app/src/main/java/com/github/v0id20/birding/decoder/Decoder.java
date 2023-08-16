@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.decoder;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -8,6 +8,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+
+import com.github.v0id20.birding.BirdObservation;
+import com.github.v0id20.birding.viewobservationslist.ViewObservationsListModel;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,6 +1,11 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.chooselocation;
 
 import android.util.Log;
+
+import com.github.v0id20.birding.mylocation.LocationCountry;
+import com.github.v0id20.birding.LocationDto;
+import com.github.v0id20.birding.mylocation.LocationRegion;
+import com.github.v0id20.birding.MyApiEndpointInterface;
 
 import java.util.ArrayList;
 
@@ -72,7 +77,6 @@ public class ChooseLocationModel {
 
     private ArrayList<LocationCountry> convertResultToLocationCountryArrayList(ArrayList<LocationDto> locationDtoArrayList) {
         ArrayList<LocationCountry> result = new ArrayList<>();
-        result.add(0, new LocationCountry("My Location"));
         for (LocationDto locationDto : locationDtoArrayList) {
             result.add(locationDto.mapLocationDto());
         }

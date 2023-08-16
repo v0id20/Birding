@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.viewobservationslist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.github.v0id20.birding.BirdObservation;
+import com.github.v0id20.birding.R;
 import com.google.android.material.tabs.TabLayout;
 
 
@@ -33,7 +35,7 @@ public class ViewObservationsListActivity extends AppCompatActivity {
             String regionName = i.getStringExtra(BirdObservation.REGION_NAME_EXTRA);
             countryName = i.getStringExtra(BirdObservation.COUNTRY_NAME_EXTRA);
             header.setText(countryName + ", " + regionName);
-        } else if (currentLatitude != -1 && currentLongitude != -1) {
+        } else if (currentLatitude != -1000 && currentLongitude != -1000) {
             header.setText(getString(R.string.nearby));
         }
         Bundle locationData = new Bundle();
@@ -69,17 +71,21 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         @Override
         public void onTabUnselected(TabLayout.Tab tab) {
             float slideTo = 0;
-            if (tab.getPosition() == 0) {
-                slideTo = tab.getCustomView().getWidth();
+            float popolam = tabLayout.getWidth() / 2;
 
+            if (tab.getPosition() == 0) {
+                tab.view.setTranslationZ(6);
+                tabLayout.getTabAt(1).view.setTranslationZ(0);
+                slideTo = tabLayout.getTabAt(1).getCustomView().getLeft() + popolam - tabLayout.getTabAt(0).getCustomView().getLeft();
             } else if (tab.getPosition() == 1) {
-                slideTo = -tab.getCustomView().getWidth();
+                tab.view.setTranslationZ(3);
+                tabLayout.getTabAt(0).view.setTranslationZ(0);
+                slideTo = -(tabLayout.getTabAt(1).getCustomView().getLeft() + popolam - tabLayout.getTabAt(0).getCustomView().getLeft());
             }
             TranslateAnimation translateAnimation = new TranslateAnimation(0, slideTo, 0, 0);
-            translateAnimation.setDuration(500);
+            translateAnimation.setDuration(600);
             MyAnimationListener myAnimationListener = new MyAnimationListener(tab, tab.getPosition());
             translateAnimation.setAnimationListener(myAnimationListener);
-
             tab.view.clearAnimation();
             tab.view.startAnimation(translateAnimation);
         }
@@ -89,13 +95,12 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         }
 
         class MyAnimationListener implements Animation.AnimationListener {
-            //TODO: improve animation and fix animated oval going under the view
-            int selectedTab;
+            int selectedTabIndex;
             TabLayout.Tab tab;
 
-            public MyAnimationListener(TabLayout.Tab tab, int selectedTab) {
+            public MyAnimationListener(TabLayout.Tab tab, int selectedTabIndex) {
                 this.tab = tab;
-                this.selectedTab = selectedTab;
+                this.selectedTabIndex = selectedTabIndex;
             }
 
             @Override
@@ -104,10 +109,10 @@ public class ViewObservationsListActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (selectedTab == 0) {
+                if (selectedTabIndex == 0) {
                     tab.setCustomView(R.layout.tab_custom_unselected);
                     tabLayout.getTabAt(1).setCustomView(R.layout.tab_custom_selected);
-                } else if (selectedTab == 1) {
+                } else if (selectedTabIndex == 1) {
                     tab.setCustomView(R.layout.tab_custom_unselected);
                     tabLayout.getTabAt(0).setCustomView(R.layout.tab_custom_selected);
                 }

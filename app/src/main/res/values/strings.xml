@@ -22,6 +22,8 @@
     <string name="unable_to_retrieve_location">There was an issue with retrieving your current location, try again later.</string>
 
 
-    <string name = "could_not_load_regions_for_this_country_try_again">Could not load regions for this country. Try again</string>
+    <string name="could_not_load_regions_for_this_country_try_again">Could not load regions for this country. Try again</string>
+    <string name="no_bird_observations_were_registered_in_this_area">No bird observations were registered in this area</string>
+    <string name="recently_seen">Recently seen:</string>
 
 </resources>

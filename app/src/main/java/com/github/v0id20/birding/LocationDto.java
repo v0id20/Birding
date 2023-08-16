@@ -1,5 +1,8 @@
 package com.github.v0id20.birding;
 
+import com.github.v0id20.birding.mylocation.LocationCountry;
+import com.github.v0id20.birding.mylocation.LocationRegion;
+
 public class LocationDto {
 
     private String name;
@@ -15,10 +18,6 @@ public class LocationDto {
 
     public String getCode() {
         return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public LocationCountry mapLocationDto() {

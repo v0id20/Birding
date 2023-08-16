@@ -1,4 +1,7 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.viewobservationslist;
+
+import com.github.v0id20.birding.BirdObservation;
+import com.github.v0id20.birding.BirdObservationItem;
 
 import java.util.ArrayList;
 
@@ -20,8 +23,14 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
         }
     }
 
-    public void updateContents(IDisplayDataReceived fragment, ArrayList<BirdObservationItem> arrayList) {
+
+    //remove fragment parameter??
+    private void updateContents(IDisplayDataReceived fragment, ArrayList<BirdObservationItem> arrayList) {
         fragment.displayDataReceived(arrayList);
+    }
+
+    private void setEmptyState() {
+        displayDataObject.displayNoDataMessage();
     }
 
     @Override
@@ -31,7 +40,15 @@ public class ObservationPresenter implements ObservationAdapter.OnObservationCli
 
     @Override
     public void onApiResponseReceived(ArrayList<BirdObservationItem> arrayList) {
-        updateContents(displayDataObject, arrayList);
+        if (arrayList.isEmpty()) {
+            setEmptyState();
+        } else {
+            updateContents(displayDataObject, arrayList);
+        }
     }
 
+    @Override
+    public void onErrorOccurred() {
+        displayDataObject.displayErrorMessage();
+    }
 }

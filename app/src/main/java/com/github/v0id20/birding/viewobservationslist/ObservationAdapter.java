@@ -1,6 +1,7 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.viewobservationslist;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.github.v0id20.birding.BirdObservation;
+import com.github.v0id20.birding.BirdObservationDate;
+import com.github.v0id20.birding.BirdObservationItem;
+import com.github.v0id20.birding.decoder.Decoder;
+import com.github.v0id20.birding.R;
+import com.github.v0id20.birding.StickyHeader;
 
 import java.util.ArrayList;
 
@@ -91,17 +99,24 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         return super.getItemViewType(position);
     }
 
+    //determine index of BirdObservationDate in birdObservationArrayList for an item with given position
     @Override
     public int getHeaderPositionForItem(int itemPosition) {
-        int i;
-        i = itemPosition;
+        int i = itemPosition;
         while (i > 0) {
             if (birdObservationArrayList.get(i) instanceof BirdObservationDate) {
+                Log.d("OBSERVATION ADAPTER", "getHeaderPositionForItem: " + birdObservationArrayList.get(i).getObservationDate());
                 return i;
             }
             i--;
         }
         return 0;
+    }
+
+    @Override
+    public void newMethod(View header) {
+        TextView dateTV = header.findViewById(R.id.obs_date);
+        dateTV.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -114,7 +129,6 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         String date = birdObservationArrayList.get(headerPosition).getObservationDate();
         TextView dateTV = header.findViewById(R.id.obs_date);
         dateTV.setText(date);
-
     }
 
     @Override
@@ -172,6 +186,5 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
     public interface OnObservationClickListener {
         void onBirdObservationClick(BirdObservation obs);
     }
-
 
 }

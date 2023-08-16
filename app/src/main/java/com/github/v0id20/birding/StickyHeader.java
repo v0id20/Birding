@@ -1,6 +1,7 @@
 package com.github.v0id20.birding;
 
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,58 +9,126 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 public class StickyHeader extends RecyclerView.ItemDecoration {
+    public enum State {INITIAL, SCROLL, MOVE_HEADER, HIDE}
 
+    private State mState = State.INITIAL;
+    private View headerCover = null;
     private final StickyHeaderInterface mListener;
+    private int currentTopChildPosition = -10;
     private int mStickyHeaderHeight;
-    View currentHeader;
-    boolean wasPreviouslyHeader = false;
+    private View currentHeader;
+    private final String TAG = "Sticky header";
+    private boolean wasPreviouslyHeader = false;
+    private int contactPoint;
 
-    public StickyHeader(RecyclerView recyclerView, @NonNull StickyHeaderInterface listener) {
+    public StickyHeader(@NonNull StickyHeaderInterface listener) {
         mListener = listener;
     }
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         super.onDrawOver(c, parent, state);
-
         View topChild = parent.getChildAt(0);
         if (topChild == null) {
             return;
         }
-
         int topChildPosition = parent.getChildAdapterPosition(topChild);
         if (topChildPosition == RecyclerView.NO_POSITION) {
             return;
         }
 
-        if (currentHeader == null) {
-            currentHeader = getHeaderViewForItem(topChildPosition, parent);
-        }
-        fixLayoutSize(parent, currentHeader);
-        int contactPoint = currentHeader.getBottom();
         View childInContact = getChildInContact(parent, contactPoint);
-        if (childInContact == null) {
-            return;
-        }
 
-
-        if (mListener.isHeader(parent.getChildAdapterPosition(childInContact))) {
-            wasPreviouslyHeader = true;
-            moveHeader(c, currentHeader, childInContact);
-            return;
-        } else if (wasPreviouslyHeader) {
-            topChild = parent.getChildAt(0);
-            topChildPosition = parent.getChildAdapterPosition(topChild);
+        if (currentTopChildPosition != topChildPosition) {
             currentHeader = getHeaderViewForItem(topChildPosition, parent);
-            wasPreviouslyHeader = false;
+            Log.d(TAG, "onDrawOver: PREVIOUS TOP CHILD" + mListener.getHeaderPositionForItem(currentTopChildPosition));
+            Log.d(TAG, "onDrawOver: TOP CHILD" + mListener.getHeaderPositionForItem(topChildPosition));
+            currentTopChildPosition = topChildPosition;
         }
-        drawHeader(c, currentHeader);
+        if (currentHeader != null) {
+            fixLayoutSize(parent, currentHeader);
+        }
+        switch (mState) {
+            case INITIAL:
+                //TODO: reuse currentHeader in the beginning of the method
+                //currentTopChildPosition = topChildPosition;
+                //currentHeader = getHeaderViewForItem(topChildPosition, parent);
+                // fixLayoutSize(parent, currentHeader);
+                contactPoint = currentHeader.getBottom();
+                wasPreviouslyHeader = true;
+                mState = State.HIDE;
+                break;
+            case SCROLL:
+                if (mListener.isHeader(parent.getChildAdapterPosition(childInContact))) {
+                    mState = State.MOVE_HEADER;
+                    Log.d(TAG, "onDrawOver: ASSIGNED STATE: MOVE HEADER");
+                    wasPreviouslyHeader = true;
+                } else if (mListener.isHeader(topChildPosition)) {
+                    mState = State.HIDE;
+                    Log.d(TAG, "onDrawOver: ASSIGNED STATE: HIDE");
+                }
+                drawHeader(c, currentHeader);
+                break;
+            case MOVE_HEADER:
+                if (mListener.isHeader(parent.getChildAdapterPosition(childInContact))) {
+                    currentHeader = getHeaderViewForItem(topChildPosition, parent);
+                    fixLayoutSize(parent, currentHeader);
+                    Log.d(TAG, "onDrawOver: TOP CHILD IN MOVING HEADER" + mListener.getHeaderPositionForItem(topChildPosition));
+                    moveHeader(c, currentHeader, childInContact);
+                } else {
+                    drawHeader(c, currentHeader);
+                    if (wasPreviouslyHeader) {
+                        mState = State.HIDE;
+                        Log.d(TAG, "onDrawOver: STATE MOVE HEADER");
+                        Log.d(TAG, "onDrawOver: ASSIGNED STATE: HIDE");
+                    } else {
+                        mState = State.SCROLL;
+                        Log.d(TAG, "onDrawOver: STATE MOVE HEADER");
+                        Log.d(TAG, "onDrawOver: ASSIGNED STATE: SCROLL");
+                    }
+                }
+                break;
+            case HIDE:
+                if (mListener.isHeader(topChildPosition)) {
+                    int bottom = topChild.getBottom();
+                    headerCover = getHeaderViewForItem2(topChildPosition, parent);
+                    // currentHeader = getHeaderViewForItem(topChildPosition, parent);
+                    Log.d(TAG, "onDrawOver HIDING HEADER: headerViewPosition for topChild = " + mListener.getHeaderPositionForItem(topChildPosition));
+                    Log.d(TAG, "onDrawOver: HIDING HEADER: topChildPosition = " + topChildPosition);
+                    fixLayoutSize2(parent, headerCover, bottom);
+                    hideMovingHeader(c, headerCover, currentHeader);
+                } else {
+                    currentHeader = getHeaderViewForItem(parent.getChildAdapterPosition(childInContact), parent);
+                    fixLayoutSize(parent, currentHeader);
+                    if (wasPreviouslyHeader) {
+                        mState = State.SCROLL;
+                        wasPreviouslyHeader = false;
+                        Log.d(TAG, "onDrawOver: ASSIGNED STATE: SCROLL");
+                    } else {
+                        mState = State.MOVE_HEADER;
+                        Log.d(TAG, "onDrawOver: ASSIGNED STATE: MOVE HEADER");
+                    }
+                }
+                drawHeader(c, currentHeader);
+                break;
+            default:
+                break;
+        }
     }
 
     private View getHeaderViewForItem(int itemPosition, RecyclerView parent) {
         int headerPosition = mListener.getHeaderPositionForItem(itemPosition);
         int layoutResId = mListener.getHeaderLayout(headerPosition);
+        View header = LayoutInflater.from(parent.getContext()).inflate(layoutResId, parent, false);
+        mListener.bindHeaderData(header, headerPosition);
+        return header;
+    }
+
+    private View getHeaderViewForItem2(int itemPosition, RecyclerView parent) {
+        int headerPosition = mListener.getHeaderPositionForItem(itemPosition);
+        int layoutResId = R.layout.item_obs_date_2;
         View header = LayoutInflater.from(parent.getContext()).inflate(layoutResId, parent, false);
         mListener.bindHeaderData(header, headerPosition);
         return header;
@@ -75,6 +144,14 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
     private void moveHeader(Canvas c, View currentHeader, View nextHeader) {
         c.save();
         c.translate(0, nextHeader.getTop() - currentHeader.getHeight());
+        currentHeader.draw(c);
+        c.restore();
+    }
+
+    private void hideMovingHeader(Canvas c, View currentHeader, View nextHeader) {
+        c.save();
+        int d1 = currentHeader.getBottom() - nextHeader.getHeight();
+        c.translate(0, d1);
         currentHeader.draw(c);
         c.restore();
     }
@@ -114,6 +191,21 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
         view.layout(0, 0, view.getMeasuredWidth(), mStickyHeaderHeight = view.getMeasuredHeight());
     }
 
+    private void fixLayoutSize2(ViewGroup parent, View view, int scrolledViewHeight) {
+
+        // Specs for parent (RecyclerView)
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(parent.getWidth(), View.MeasureSpec.EXACTLY);
+        int heightSpec = View.MeasureSpec.makeMeasureSpec(parent.getHeight(), View.MeasureSpec.UNSPECIFIED);
+
+        // Specs for children (headers)
+        int childWidthSpec = ViewGroup.getChildMeasureSpec(widthSpec, parent.getPaddingLeft() + parent.getPaddingRight(), view.getLayoutParams().width);
+        int childHeightSpec = ViewGroup.getChildMeasureSpec(heightSpec, parent.getPaddingTop() + parent.getPaddingBottom(), view.getLayoutParams().height);
+
+        view.measure(childWidthSpec, childHeightSpec);
+
+        view.layout(0, 0, view.getMeasuredWidth(), scrolledViewHeight);
+    }
+
     public interface StickyHeaderInterface {
 
         /**
@@ -124,6 +216,8 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
          * @return int. Position of the header item in the adapter.
          */
         int getHeaderPositionForItem(int itemPosition);
+
+        void newMethod(View header);
 
         /**
          * This method gets called by {@link HeaderItemDecoration} to get layout resource id for the header item at specified adapter's position.

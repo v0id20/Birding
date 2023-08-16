@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewObservationsListActivity">
+    tools:context=".viewobservationslist.ViewObservationsListActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/head_panel"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/backgroundcircled"
+        android:background="@drawable/background_cyan_rounded_corners"
         android:alpha="0.9"
         android:elevation="16dp">
 
@@ -20,22 +20,23 @@
             android:id="@+id/header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="24dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:fontFamily="lato"
+            style="@style/TextAppearance.MdcTypographyStyles.Headline6"
             tools:text="Brazil" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header"
-            app:tabIndicatorHeight="0dp" />
+            app:tabIndicatorHeight="0dp"
+            android:background="@drawable/background_cyan_rounded_corners" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.viewpager.widget.ViewPager
@@ -43,7 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/head_panel"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="198dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

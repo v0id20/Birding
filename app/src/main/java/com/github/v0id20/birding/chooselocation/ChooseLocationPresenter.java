@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.chooselocation;
 
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
@@ -7,6 +7,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.github.v0id20.birding.mylocation.LocationCountry;
+import com.github.v0id20.birding.mylocation.LocationRegion;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,6 +31,7 @@ public class ChooseLocationPresenter implements ChooseLocationAdapter.OnMyLocati
         chooseLocationModel.requestCountriesList(new ChooseLocationModel.OnRequestResultCallback<LocationCountry>() {
             @Override
             public void onRequestResult(ArrayList<LocationCountry> locationList) {
+                locationList.add(0, new LocationCountry("My Location"));
                 onCountriesListReceived(locationList);
             }
 

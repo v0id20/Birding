@@ -46,7 +46,6 @@ public class ViewBirdObservationActivity extends AppCompatActivity implements On
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
 
     @Override

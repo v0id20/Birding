@@ -1,6 +1,9 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.chooselocation;
 
 import android.location.LocationManager;
+
+import com.github.v0id20.birding.mylocation.LocationCountry;
+import com.github.v0id20.birding.mylocation.LocationRegion;
 
 import java.util.ArrayList;
 

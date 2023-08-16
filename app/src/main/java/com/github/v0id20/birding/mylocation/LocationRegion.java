@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.mylocation;
 
 public class LocationRegion extends MyLocation {
     private final LocationCountry country;

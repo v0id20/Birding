@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.viewobservationslist;
 
 import android.content.Intent;
 import android.location.Geocoder;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,30 +15,38 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.v0id20.birding.BirdObservation;
+import com.github.v0id20.birding.BirdObservationItem;
+import com.github.v0id20.birding.R;
+import com.github.v0id20.birding.StickyHeader;
+import com.github.v0id20.birding.ViewBirdObservationActivity;
+import com.github.v0id20.birding.decoder.Decoder;
+
 import java.util.ArrayList;
 
-public class FragmentObservations extends Fragment implements IDisplayDataReceived {
+public class ObservationsFragment extends Fragment implements IDisplayDataReceived {
     private ObservationPresenter observationPresenter;
     private ObservationAdapter observationAdapter;
     private RecyclerView recyclerView;
     private String observationsType;
+    private ImageView noDataIcon;
+    private TextView noData;
+    private TextView errorMessage;
     private View loader;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        observationsType = getArguments().getString(ViewObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE);
-        if (observationsType.equals(ViewObservationsListActivity.OBSERVATIONS_TYPE_RECENT)) {
-            return inflater.inflate(R.layout.fragment_recent_obsevations, container, false);
-        } else if (observationsType.equals(ViewObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE)) {
-            return inflater.inflate(R.layout.fragment_recent_obsevations, container, false);
-        }
-        return null;
+        return inflater.inflate(R.layout.fragment_obsevations, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        observationsType = getArguments().getString(ViewObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE);
+        noData = view.findViewById(R.id.no_data);
+        noDataIcon = view.findViewById(R.id.no_data_icon);
+        errorMessage = view.findViewById(R.id.error_text);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         observationPresenter = new ObservationPresenter(this);
@@ -44,7 +54,7 @@ public class FragmentObservations extends Fragment implements IDisplayDataReceiv
         observationAdapter = new ObservationAdapter(new ArrayList<>(), decoder);
 
         observationAdapter.setOnObservationClickListener(observationPresenter);
-        recyclerView.addItemDecoration(new StickyHeader(recyclerView, observationAdapter));
+        recyclerView.addItemDecoration(new StickyHeader(observationAdapter));
         loader = view.findViewById(R.id.loader);
         loader.setVisibility(View.VISIBLE);
         String regionCode = getArguments().getString(BirdObservation.REGION_CODE_EXTRA);
@@ -52,6 +62,7 @@ public class FragmentObservations extends Fragment implements IDisplayDataReceiv
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);
         double currentLongitude = getArguments().getDouble(BirdObservation.LONGITUDE_EXTRA);
         observationPresenter.getData(observationPresenter, countryName, regionCode, currentLatitude, currentLongitude, observationsType);
+
     }
 
     public void hideLoader() {
@@ -62,6 +73,19 @@ public class FragmentObservations extends Fragment implements IDisplayDataReceiv
     public void displayDataReceived(ArrayList<BirdObservationItem> arrayList) {
         hideLoader();
         updateLists(arrayList);
+    }
+
+    @Override
+    public void displayNoDataMessage() {
+        noData.setVisibility(View.VISIBLE);
+        noDataIcon.setVisibility(View.VISIBLE);
+        loader.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void displayErrorMessage() {
+        loader.setVisibility(View.GONE);
+        errorMessage.setVisibility(View.VISIBLE);
     }
 
     public void updateLists(ArrayList<BirdObservationItem> birdObservationsData) {
@@ -83,6 +107,5 @@ public class FragmentObservations extends Fragment implements IDisplayDataReceiv
         i.putExtra(BirdObservation.HOW_MANY_EXTRA, birdObservation.getHowMany());
         this.startActivity(i);
     }
-
 
 }
