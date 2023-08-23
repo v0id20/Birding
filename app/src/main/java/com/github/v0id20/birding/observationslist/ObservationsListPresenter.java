@@ -19,7 +19,7 @@ public class ObservationsListPresenter implements ObservationAdapter.OnObservati
     public void getData(ObservationsListModel.OnApiResponseReceived presenterInstance, String countryName, String regionCode, double latitude, double longitude, String type) {
         if (latitude != ObservationsListActivity.INVALID_LATITUDE && longitude != -ObservationsListActivity.INVALID_LONGITUDE) {
             viewObservationsListModel.getData(presenterInstance, latitude, longitude, type);
-        } else if (regionCode.equals(ChooseLocationActivity.REGION_CODE_NEARBY)) {
+        } else if (!regionCode.equals(ChooseLocationActivity.REGION_CODE_NEARBY)) {
             viewObservationsListModel.getData(presenterInstance, countryName, regionCode, type);
         }
     }
