@@ -18,7 +18,6 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
     private View headerCover = null;
     private final StickyHeaderInterface mListener;
     private int currentTopChildPosition = -10;
-    private int mStickyHeaderHeight;
     private View currentHeader;
     private final String TAG = "Sticky header";
     private boolean wasPreviouslyHeader = false;
@@ -29,7 +28,7 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+    public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.onDrawOver(c, parent, state);
         View topChild = parent.getChildAt(0);
         if (topChild == null) {
@@ -52,9 +51,6 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
         switch (mState) {
             case INITIAL:
                 //TODO: reuse currentHeader in the beginning of the method
-                //currentTopChildPosition = topChildPosition;
-                //currentHeader = getHeaderViewForItem(topChildPosition, parent);
-                // fixLayoutSize(parent, currentHeader);
                 contactPoint = currentHeader.getBottom();
                 wasPreviouslyHeader = true;
                 mState = State.HIDE;
@@ -94,7 +90,6 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
                 if (mListener.isHeader(topChildPosition)) {
                     int bottom = topChild.getBottom();
                     headerCover = getHeaderViewForItem2(topChildPosition, parent);
-                    // currentHeader = getHeaderViewForItem(topChildPosition, parent);
                     fixLayoutSize2(parent, headerCover, bottom);
                     hideMovingHeader(c, headerCover, currentHeader);
                 } else {
@@ -186,7 +181,7 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
 
         view.measure(childWidthSpec, childHeightSpec);
 
-        view.layout(0, 0, view.getMeasuredWidth(), mStickyHeaderHeight = view.getMeasuredHeight());
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
     }
 
     private void fixLayoutSize2(ViewGroup parent, View view, int scrolledViewHeight) {

@@ -12,11 +12,12 @@ public class BirdObservation extends BirdObservationItem {
     public static final String OBSERVATION_DATE_EXTRA = "Observation date";
     public static final String OBSERVATION_TIME_EXTRA = "Observation time";
     public static final String HOW_MANY_EXTRA = "How many";
+    public static final String SUBNATIONAL_NAME_EXTRA = "Subnational name";
     private final String commonName;
     private final String scientificName;
     private final String countryName;
     private String locationName;
-    private String subnational1Name;
+    private final String subnational1Name;
     private final String time;
     private final String latitude;
     private final String longitude;
@@ -24,11 +25,12 @@ public class BirdObservation extends BirdObservationItem {
     private boolean locationDecoded;
 
 
-    public BirdObservation(String commonName, String sciName, String countryName, String locationName, String date, String time, String latitude, String longitude, int howMany) {
+    public BirdObservation(String commonName, String sciName, String countryName, String subnational1Name, String locationName, String date, String time, String latitude, String longitude, int howMany) {
         super(date);
         this.commonName = commonName;
         this.scientificName = sciName;
         this.countryName = countryName;
+        this.subnational1Name = subnational1Name;
         this.locationName = locationName;
         this.time = time;
         this.howMany = howMany;

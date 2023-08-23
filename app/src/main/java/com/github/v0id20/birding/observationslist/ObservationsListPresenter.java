@@ -11,16 +11,15 @@ public class ObservationsListPresenter implements ObservationAdapter.OnObservati
     private final IDisplayDataReceived displayDataObject;
 
     public ObservationsListPresenter(IDisplayDataReceived displayDataObject) {
-        super();
         viewObservationsListModel = new ObservationsListModel();
         this.displayDataObject = displayDataObject;
     }
 
-    public void getData(ObservationsListModel.OnApiResponseReceived presenterInstance, String countryName, String regionCode, double latitude, double longitude, String type) {
+    public void getData(String countryName, String regionCode, double latitude, double longitude, String type) {
         if (latitude != ObservationsListActivity.INVALID_LATITUDE && longitude != -ObservationsListActivity.INVALID_LONGITUDE) {
-            viewObservationsListModel.getData(presenterInstance, latitude, longitude, type);
+            viewObservationsListModel.getData(this, latitude, longitude, type);
         } else if (!regionCode.equals(ChooseLocationActivity.REGION_CODE_NEARBY)) {
-            viewObservationsListModel.getData(presenterInstance, countryName, regionCode, type);
+            viewObservationsListModel.getData(this, countryName, regionCode, type);
         }
     }
 
@@ -49,5 +48,10 @@ public class ObservationsListPresenter implements ObservationAdapter.OnObservati
     @Override
     public void onErrorOccurred() {
         displayDataObject.displayErrorMessage();
+    }
+
+    public void retryRequest(String countryName, String regionCode, double latitude, double longitude, String type) {
+        displayDataObject.setLoadingState();
+        getData(countryName, regionCode, latitude, longitude, type);
     }
 }

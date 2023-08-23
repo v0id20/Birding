@@ -125,7 +125,7 @@ public class ObservationsListModel {
         } catch (ParseException e) {
             Log.d(TAG, "mapBirdObservationDto: could not parse date or time. ", e);
         }
-        BirdObservation birdObservation = new BirdObservation(birdObservationDTO.getComName(), birdObservationDTO.getSciName(), country, birdObservationDTO.getLocName(), date, time, birdObservationDTO.getLat(), birdObservationDTO.getLng(), birdObservationDTO.getHowMany());
+        BirdObservation birdObservation = new BirdObservation(birdObservationDTO.getComName(), birdObservationDTO.getSciName(), country, birdObservationDTO.getSubnational1Name(), birdObservationDTO.getLocName(), date, time, birdObservationDTO.getLat(), birdObservationDTO.getLng(), birdObservationDTO.getHowMany());
         birdObservation.setLocationDecoded(false);
         return birdObservation;
     }

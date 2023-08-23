@@ -13,4 +13,6 @@ public interface IDisplayDataReceived {
     void displayErrorMessage();
 
     void onItemClick(BirdObservation birdObservation);
+
+    void setLoadingState();
 }

@@ -9,7 +9,7 @@
     <string name="recent_obs">Recent observations\u0020</string>
     <string name="recent_notable_obs">Recent notable observations\u0020</string>
     <string name="error_when_getting_location">Error occurred when getting current location. Try again later</string>
-    <string name="error_retrieving_data">Error occurred when retrieving data. Try again later</string>
+    <string name="error_retrieving_data">Error occurred when retrieving data</string>
     <string name="error_cant_retrieve_obs_without_location_on">Can not retrieve observation at your location without location services enabled</string>
     <string name="how_many">How many:</string>
     <string name="in">in\u0020</string>
@@ -18,13 +18,12 @@
     <string name="location">Location:</string>
     <string name="location_access_disabled_in_settings">Location access is disabled in the settings</string>
     <string name="my_location">My location</string>
-    <string name="nearby">nearby</string>
+    <string name="nearby">Nearby</string>
     <string name="notable">Notable</string>
     <string name="seen_at">Seen at:</string>
     <string name="settings">Settings</string>
     <string name="try_again">Try again</string>
     <string name="unable_to_retrieve_location">There was an issue with retrieving your current location, try again later.</string>
-
 
     <string name="could_not_load_regions_for_this_country_try_again">Could not load regions for this country. Try again</string>
     <string name="no_bird_observations_were_registered_in_this_area">No bird observations were registered in this area</string>

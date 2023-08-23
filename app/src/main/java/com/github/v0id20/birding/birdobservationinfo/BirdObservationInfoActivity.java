@@ -61,11 +61,12 @@ public class BirdObservationInfoActivity extends AppCompatActivity implements On
         String commonName = extra.getString(BirdObservation.COMMON_NAME_EXTRA);
         String sciName = extra.getString(BirdObservation.SCIENTIFIC_NAME_EXTRA);
         String countryName = extra.getString(BirdObservation.COUNTRY_NAME_EXTRA);
+        String subnationalName = extra.getString(BirdObservation.SUBNATIONAL_NAME_EXTRA);
         int howMany = extra.getInt(BirdObservation.HOW_MANY_EXTRA, DEFAULT_BIRD_QUANTITY);
         String locationName = extra.getString(BirdObservation.LOCATION_NAME_EXTRA);
         String time = extra.getString(BirdObservation.OBSERVATION_TIME_EXTRA);
         String date = extra.getString(BirdObservation.OBSERVATION_DATE_EXTRA);
-        return new BirdObservation(commonName, sciName, countryName, locationName, time, date, latitude, longitude, howMany);
+        return new BirdObservation(commonName, sciName, countryName, subnationalName, locationName, time, date, latitude, longitude, howMany);
     }
 
     private void displayBirdObservationData(BirdObservation birdObservation) {

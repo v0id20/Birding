@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class LocationCountry extends LocationItem {
     private boolean expanded;
-    private ArrayList<LocationRegion> subRegions = new ArrayList(Arrays.asList(new LocationRegion("All Regions", this.getLocationCode(), this)));
+    private ArrayList<LocationRegion> subRegions = new ArrayList<>(Arrays.asList(new LocationRegion("All Regions", this.getLocationCode(), this)));
 
     public LocationCountry(String location) {
         super(location, null);

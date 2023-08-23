@@ -175,9 +175,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         errorText.setVisibility(View.VISIBLE);
         errorIcon.setVisibility(View.VISIBLE);
         tryAgain.setVisibility(View.VISIBLE);
-        tryAgain.setOnClickListener(v -> {
-            chooseLocationPresenter.retryLocationDataRequest();
-        });
+        tryAgain.setOnClickListener(v -> chooseLocationPresenter.retryLocationDataRequest());
     }
 
     @Override
@@ -196,7 +194,9 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
             @Override
             public void onClick(View view) {
                 chooseLocationAdapter.refreshRegionList(position);
-                s.dismiss();
+                if (s.isShown()) {
+                    s.dismiss();
+                }
             }
         });
         s.show();
