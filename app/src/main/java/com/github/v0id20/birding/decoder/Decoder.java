@@ -5,12 +5,12 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.github.v0id20.birding.BirdObservation;
-import com.github.v0id20.birding.viewobservationslist.ViewObservationsListModel;
+import com.github.v0id20.birding.birdobservationitem.BirdObservation;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,14 +18,14 @@ import java.util.List;
 public class Decoder {
     private final static String TAG = "Decoder";
     private final Handler handler = new Handler();
-    private ViewObservationsListModel.onLocationsDecodedListener onLocationsDecodedListener;
+    private OnLocationsDecodedListener onLocationsDecodedListener;
     private final Geocoder geocoder;
 
     public Decoder(Geocoder geocoder) {
         this.geocoder = geocoder;
     }
 
-    public void setOnLocationsDecodedListener(ViewObservationsListModel.onLocationsDecodedListener onLocationsDecodedListener) {
+    public void setOnLocationsDecodedListener(OnLocationsDecodedListener onLocationsDecodedListener) {
         this.onLocationsDecodedListener = onLocationsDecodedListener;
     }
 
@@ -36,7 +36,7 @@ public class Decoder {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 decodeAndroidVersionTiramisu(lat, lon, position);
             } else {
-                decodeOld(lat, lon, position);
+                decodeForOldAndroidVersions(lat, lon, position);
             }
         } else {
             if (onLocationsDecodedListener != null) {
@@ -45,31 +45,34 @@ public class Decoder {
         }
     }
 
-    private double[] validCoordinates(String latitude, String longitude) {
+    private Pair<Double, Double> convertCoordinatesToDouble(String latitude, String longitude) {
         if (latitude != null && longitude != null) {
             try {
                 double lat = Double.parseDouble(latitude);
                 double lon = Double.parseDouble(longitude);
-                return new double[]{lat, lon};
+                return new Pair<>(lat, lon);
             } catch (IllegalArgumentException e) {
-                Log.e(TAG, "validCoordinates: could not convert coordinates values to double", e);
+                Log.d(TAG, "convertCoordinatesToDouble: could not convert coordinates values to double. ", e);
             }
         } else {
-            Log.i(TAG, "validCoordinates: latitude or longitude were null");
+            Log.d(TAG, "convertCoordinatesToDouble: latitude or longitude were null");
         }
-        return new double[0];
+        return null;
     }
 
-    private void decodeOld(String latString, String lonString, int position) {
-        double[] coordinates = validCoordinates(latString, lonString);
-        if (coordinates.length >= 2) {
-            double lat = coordinates[0];
-            double lon = coordinates[1];
+    /**
+     * SDK version < 33
+     */
+    private void decodeForOldAndroidVersions(String latString, String lonString, int position) {
+        Pair<Double, Double> coordinates = convertCoordinatesToDouble(latString, lonString);
+        if (coordinates != null) {
+            double lat = coordinates.first;
+            double lon = coordinates.second;
             try {
                 List<Address> addresses = geocoder.getFromLocation(lat, lon, 2);
                 if (!addresses.isEmpty()) {
                     String newAddress = formatAddress(addresses);
-                    Log.i(TAG, "decodeLocations: decoded see result " + newAddress + " " + lat + " " + lon);
+                    Log.d(TAG, "decodeForOldAndroidVersions: decoded successfully: " + newAddress + " " + lat + " " + lon);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -81,9 +84,9 @@ public class Decoder {
                     return;
                 }
             } catch (IOException e) {
-                Log.e(TAG, "decodeLocations: was not able to convert coordinates into location for SDK version<33");
+                Log.d(TAG, "decodeForOldAndroidVersions: was not able to convert coordinates into location");
             } catch (IllegalArgumentException e) {
-                Log.e(TAG, "decodeLocations: invalid latitude or longitude", e);
+                Log.d(TAG, "decodeForOldAndroidVersions: invalid latitude or longitude. ", e);
             }
         }
         if (onLocationsDecodedListener != null) {
@@ -93,31 +96,36 @@ public class Decoder {
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void decodeAndroidVersionTiramisu(String latString, String lonString, int position) {
-        double[] coordinates = validCoordinates(latString, lonString);
-        if (coordinates.length >= 2) {
+        Pair<Double, Double> coordinates = convertCoordinatesToDouble(latString, lonString);
+        if (coordinates != null) {
             try {
-                geocoder.getFromLocation(coordinates[0], coordinates[1], 2, new Geocoder.GeocodeListener() {
+                geocoder.getFromLocation(coordinates.first, coordinates.second, 2, new Geocoder.GeocodeListener() {
                     @Override
                     public void onGeocode(@NonNull List<Address> addresses) {
                         if (!addresses.isEmpty()) {
                             String newAddress = formatAddress(addresses);
                             sendDecodedLocation(true, newAddress, position);
-                            Log.i(TAG, "decodeLocations: decoded see result " + newAddress + " " + coordinates[0] + " " + coordinates[1]);
+                            Log.d(TAG, "onGeocode: decoded successfully, see result: " + newAddress + " " + coordinates.first + " " + coordinates.second);
+                        } else {
+                            sendDecodedLocation(false, null, position);
                         }
                     }
 
                     public void onError(String errorMessage) {
-                        Log.e(TAG, "onError: " + errorMessage);
+                        Log.d(TAG, "decodeAndroidVersionTiramisu onError: could not decode location. " + errorMessage);
                         sendDecodedLocation(false, null, position);
                     }
                 });
             } catch (IllegalArgumentException e) {
-                Log.e(TAG, "decodeLocations: invalid latitude or longitude", e);
+                Log.d(TAG, "decodeAndroidVersionTiramisu: invalid latitude or longitude", e);
+                sendDecodedLocation(false, null, position);
             }
+        } else {
+            sendDecodedLocation(false, null, position);
         }
     }
 
-    private String removeElemntFromAddress(String targetString, String element) {
+    private String removeElementFromAddress(String targetString, String element) {
         String result = targetString;
         if (element != null) {
             result = targetString.replace(", " + element, "");
@@ -128,6 +136,10 @@ public class Decoder {
         return result;
     }
 
+    /**
+     * extract string value of address and clean it up
+     * by removing from it country name and country postal code
+     */
     private String extractAddress(Address address) {
         String resultAddress;
         StringBuilder builder = new StringBuilder();
@@ -135,12 +147,12 @@ public class Decoder {
             String a = address.getAddressLine(i);
             builder.append(a);
         }
-        resultAddress = removeElemntFromAddress(builder.toString(), address.getCountryName());
-        resultAddress = removeElemntFromAddress(resultAddress, address.getPostalCode());
+        resultAddress = removeElementFromAddress(builder.toString(), address.getCountryName());
+        resultAddress = removeElementFromAddress(resultAddress, address.getPostalCode());
         return resultAddress;
     }
 
-    private String replaceNullOrEmpty(Address address) {
+    private static String extractAddressLineWithFallback(Address address) {
         String formattedAddress;
         if (address.getAddressLine(0) != null && !address.getAddressLine(0).equals("")) {
             formattedAddress = address.getAddressLine(0);
@@ -149,6 +161,13 @@ public class Decoder {
         }
         return formattedAddress;
     }
+
+    /**
+     * formatAddresses returns string representing address.
+     * //List addresses may contain up to 2 elements.
+     * //Try to format address using the first element of addresses, if the returned result is empty string,
+     * //then try to extract address from the second element of addresses
+     */
 
     private String formatAddress(List<Address> addresses) {
         String newAddress = "";
@@ -160,10 +179,10 @@ public class Decoder {
                     Address address2 = addresses.get(1);
                     newAddress = extractAddress(address2);
                     if (newAddress.trim().equals("")) {
-                        newAddress = replaceNullOrEmpty(address2);
+                        newAddress = extractAddressLineWithFallback(address2);
                     }
                 } else {
-                    newAddress = replaceNullOrEmpty(address);
+                    newAddress = extractAddressLineWithFallback(address);
                 }
             }
         }
@@ -178,6 +197,12 @@ public class Decoder {
                 handler.post(() -> onLocationsDecodedListener.onLocationDecodingFailure(position));
             }
         }
+    }
+
+    public interface OnLocationsDecodedListener {
+        void onLocationDecoded(String newAddress, int position);
+
+        void onLocationDecodingFailure(int position);
     }
 
 }

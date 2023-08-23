@@ -1,9 +1,7 @@
 package com.github.v0id20.birding.chooselocation;
 
-import android.location.LocationManager;
-
-import com.github.v0id20.birding.mylocation.LocationCountry;
-import com.github.v0id20.birding.mylocation.LocationRegion;
+import com.github.v0id20.birding.locationitem.LocationCountry;
+import com.github.v0id20.birding.locationitem.LocationRegion;
 
 import java.util.ArrayList;
 
@@ -12,11 +10,9 @@ public interface ChooseLocationView {
 
     void displayRegionListReceived(ArrayList<LocationRegion> locationList, int position);
 
-    void onChosenLocationClick(LocationRegion region);
+    void openRegionObservations(LocationRegion region);
 
-    void onMyLocationClick(double lat, double lon);
-
-    LocationManager getLocationManager();
+    void openCurrentLocationObservations(double lat, double lon);
 
     boolean checkLocationPermissionGranted();
 

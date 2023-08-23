@@ -1,4 +1,4 @@
-package com.github.v0id20.birding.viewobservationslist;
+package com.github.v0id20.birding.observationslist;
 
 import android.content.Intent;
 import android.location.Geocoder;
@@ -15,17 +15,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.v0id20.birding.BirdObservation;
-import com.github.v0id20.birding.BirdObservationItem;
+import com.github.v0id20.birding.birdobservationitem.BirdObservation;
+import com.github.v0id20.birding.birdobservationitem.BirdObservationItem;
 import com.github.v0id20.birding.R;
-import com.github.v0id20.birding.StickyHeader;
-import com.github.v0id20.birding.ViewBirdObservationActivity;
+import com.github.v0id20.birding.birdobservationinfo.BirdObservationInfoActivity;
 import com.github.v0id20.birding.decoder.Decoder;
 
 import java.util.ArrayList;
 
-public class ObservationsFragment extends Fragment implements IDisplayDataReceived {
-    private ObservationPresenter observationPresenter;
+public class ObservationsListFragment extends Fragment implements IDisplayDataReceived {
+    private ObservationsListPresenter observationPresenter;
     private ObservationAdapter observationAdapter;
     private RecyclerView recyclerView;
     private String observationsType;
@@ -43,16 +42,15 @@ public class ObservationsFragment extends Fragment implements IDisplayDataReceiv
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        observationsType = getArguments().getString(ViewObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE);
+        observationsType = getArguments().getString(ObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE);
         noData = view.findViewById(R.id.no_data);
         noDataIcon = view.findViewById(R.id.no_data_icon);
         errorMessage = view.findViewById(R.id.error_text);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        observationPresenter = new ObservationPresenter(this);
+        observationPresenter = new ObservationsListPresenter(this);
         Decoder decoder = new Decoder(new Geocoder(view.getContext()));
         observationAdapter = new ObservationAdapter(new ArrayList<>(), decoder);
-
         observationAdapter.setOnObservationClickListener(observationPresenter);
         recyclerView.addItemDecoration(new StickyHeader(observationAdapter));
         loader = view.findViewById(R.id.loader);
@@ -62,7 +60,6 @@ public class ObservationsFragment extends Fragment implements IDisplayDataReceiv
         double currentLatitude = getArguments().getDouble(BirdObservation.LATITUDE_EXTRA);
         double currentLongitude = getArguments().getDouble(BirdObservation.LONGITUDE_EXTRA);
         observationPresenter.getData(observationPresenter, countryName, regionCode, currentLatitude, currentLongitude, observationsType);
-
     }
 
     public void hideLoader() {
@@ -95,7 +92,7 @@ public class ObservationsFragment extends Fragment implements IDisplayDataReceiv
 
     @Override
     public void onItemClick(BirdObservation birdObservation) {
-        Intent i = new Intent(getContext(), ViewBirdObservationActivity.class);
+        Intent i = new Intent(getContext(), BirdObservationInfoActivity.class);
         i.putExtra(BirdObservation.COMMON_NAME_EXTRA, birdObservation.getCommonName());
         i.putExtra(BirdObservation.SCIENTIFIC_NAME_EXTRA, birdObservation.getScientificName());
         i.putExtra(BirdObservation.COUNTRY_NAME_EXTRA, birdObservation.getCountryName());

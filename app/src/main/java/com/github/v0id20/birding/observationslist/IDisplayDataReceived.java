@@ -1,7 +1,7 @@
-package com.github.v0id20.birding.viewobservationslist;
+package com.github.v0id20.birding.observationslist;
 
-import com.github.v0id20.birding.BirdObservation;
-import com.github.v0id20.birding.BirdObservationItem;
+import com.github.v0id20.birding.birdobservationitem.BirdObservation;
+import com.github.v0id20.birding.birdobservationitem.BirdObservationItem;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,7 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.data;
 
-import com.github.v0id20.birding.mylocation.LocationCountry;
-import com.github.v0id20.birding.mylocation.LocationRegion;
+import com.github.v0id20.birding.locationitem.LocationCountry;
+import com.github.v0id20.birding.locationitem.LocationRegion;
 
 public class LocationDto {
 

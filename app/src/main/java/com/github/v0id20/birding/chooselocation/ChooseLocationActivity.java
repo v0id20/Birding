@@ -24,11 +24,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.v0id20.birding.BirdObservation;
-import com.github.v0id20.birding.mylocation.LocationCountry;
-import com.github.v0id20.birding.mylocation.LocationRegion;
 import com.github.v0id20.birding.R;
-import com.github.v0id20.birding.viewobservationslist.ViewObservationsListActivity;
+import com.github.v0id20.birding.birdobservationitem.BirdObservation;
+import com.github.v0id20.birding.locationitem.LocationCountry;
+import com.github.v0id20.birding.locationitem.LocationRegion;
+import com.github.v0id20.birding.observationslist.ObservationsListActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -38,6 +38,7 @@ import java.util.ArrayList;
 
 public class ChooseLocationActivity extends AppCompatActivity implements ChooseLocationView {
     public static final int REQUEST_CODE = 231;
+    public static final String REGION_CODE_NEARBY = "nearby";
     private ConstraintLayout constraintLayout;
     private RecyclerView recyclerView;
     private CircularProgressIndicator loader;
@@ -60,7 +61,9 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
-        chooseLocationPresenter = new ChooseLocationPresenter(this, flpc);
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        chooseLocationPresenter = new ChooseLocationPresenter(this, flpc, locationManager, getResources());
         chooseLocationPresenter.requestLocationData();
 
         //Photo by <a href="https://unsplash.com/@brunus?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Bruno Martins</a> on <a href="https://unsplash.com/photos/BYY_rYlZOkI?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
@@ -98,23 +101,19 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     @Override
     public void displayCountriesListReceived(ArrayList<LocationCountry> locationDataArrayList) {
         hideLoader();
-        chooseLocationAdapter = new ChooseLocationAdapter();
-        chooseLocationAdapter.setColors(getResources().getColor(R.color.cyan_300), getResources().getColor(R.color.black));
+        chooseLocationAdapter = new ChooseLocationAdapter(getResources().getColor(R.color.cyan_300, getTheme()), getResources().getColor(R.color.black, getTheme()), chooseLocationPresenter, chooseLocationPresenter, chooseLocationPresenter);
         chooseLocationAdapter.setCountryArrayList(locationDataArrayList);
         recyclerView.setAdapter(chooseLocationAdapter);
-        chooseLocationAdapter.setOnMyLocationClickListener(chooseLocationPresenter);
-        chooseLocationAdapter.setOnChosenLocationClickListener(chooseLocationPresenter);
-        chooseLocationAdapter.setOnCountryClickListener(chooseLocationPresenter);
     }
 
     @Override
     public void displayRegionListReceived(ArrayList<LocationRegion> locationList, int position) {
-        chooseLocationAdapter.bind(locationList, position);
+        chooseLocationAdapter.showRegionListForPosition(locationList, position);
     }
 
     @Override
-    public void onChosenLocationClick(LocationRegion region) {
-        Intent i = new Intent(this, ViewObservationsListActivity.class);
+    public void openRegionObservations(LocationRegion region) {
+        Intent i = new Intent(this, ObservationsListActivity.class);
         i.putExtra(BirdObservation.REGION_CODE_EXTRA, region.getLocationCode());
         i.putExtra(BirdObservation.REGION_NAME_EXTRA, region.getLocationName());
         i.putExtra(BirdObservation.COUNTRY_NAME_EXTRA, region.getCountry().getLocationName());
@@ -122,14 +121,14 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
     }
 
     @Override
-    public void onMyLocationClick(double lat, double lon) {
-        Intent i = new Intent(this, ViewObservationsListActivity.class);
+    public void openCurrentLocationObservations(double lat, double lon) {
+        Intent i = new Intent(this, ObservationsListActivity.class);
+        i.putExtra(BirdObservation.REGION_CODE_EXTRA, REGION_CODE_NEARBY);
         i.putExtra(BirdObservation.LATITUDE_EXTRA, lat);
         i.putExtra(BirdObservation.LONGITUDE_EXTRA, lon);
         this.startActivity(i);
     }
 
-    @Override
     public LocationManager getLocationManager() {
         return (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
     }
@@ -167,7 +166,7 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
 
     @Override
     public void showUnableToGetLocationToast() {
-        showSnack(R.string.location_access_disabled_in_settings, 5000);
+        showSnack(R.string.error_when_getting_location, 5000);
     }
 
     @Override
@@ -176,11 +175,8 @@ public class ChooseLocationActivity extends AppCompatActivity implements ChooseL
         errorText.setVisibility(View.VISIBLE);
         errorIcon.setVisibility(View.VISIBLE);
         tryAgain.setVisibility(View.VISIBLE);
-        tryAgain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                chooseLocationPresenter.retryLocationDataRequest();
-            }
+        tryAgain.setOnClickListener(v -> {
+            chooseLocationPresenter.retryLocationDataRequest();
         });
     }
 

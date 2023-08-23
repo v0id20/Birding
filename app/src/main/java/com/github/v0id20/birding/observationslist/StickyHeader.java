@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.observationslist;
 
 import android.graphics.Canvas;
 import android.util.Log;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.v0id20.birding.R;
 
 public class StickyHeader extends RecyclerView.ItemDecoration {
     public enum State {INITIAL, SCROLL, MOVE_HEADER, HIDE}
@@ -43,8 +44,6 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
 
         if (currentTopChildPosition != topChildPosition) {
             currentHeader = getHeaderViewForItem(topChildPosition, parent);
-            Log.d(TAG, "onDrawOver: PREVIOUS TOP CHILD" + mListener.getHeaderPositionForItem(currentTopChildPosition));
-            Log.d(TAG, "onDrawOver: TOP CHILD" + mListener.getHeaderPositionForItem(topChildPosition));
             currentTopChildPosition = topChildPosition;
         }
         if (currentHeader != null) {
@@ -63,10 +62,12 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
             case SCROLL:
                 if (mListener.isHeader(parent.getChildAdapterPosition(childInContact))) {
                     mState = State.MOVE_HEADER;
+                    Log.d(TAG, "onDrawOver: STATE: SCROLL");
                     Log.d(TAG, "onDrawOver: ASSIGNED STATE: MOVE HEADER");
                     wasPreviouslyHeader = true;
                 } else if (mListener.isHeader(topChildPosition)) {
                     mState = State.HIDE;
+                    Log.d(TAG, "onDrawOver: STATE: SCROLL");
                     Log.d(TAG, "onDrawOver: ASSIGNED STATE: HIDE");
                 }
                 drawHeader(c, currentHeader);
@@ -75,17 +76,16 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
                 if (mListener.isHeader(parent.getChildAdapterPosition(childInContact))) {
                     currentHeader = getHeaderViewForItem(topChildPosition, parent);
                     fixLayoutSize(parent, currentHeader);
-                    Log.d(TAG, "onDrawOver: TOP CHILD IN MOVING HEADER" + mListener.getHeaderPositionForItem(topChildPosition));
                     moveHeader(c, currentHeader, childInContact);
                 } else {
                     drawHeader(c, currentHeader);
                     if (wasPreviouslyHeader) {
                         mState = State.HIDE;
-                        Log.d(TAG, "onDrawOver: STATE MOVE HEADER");
+                        Log.d(TAG, "onDrawOver: STATE: MOVE HEADER");
                         Log.d(TAG, "onDrawOver: ASSIGNED STATE: HIDE");
                     } else {
                         mState = State.SCROLL;
-                        Log.d(TAG, "onDrawOver: STATE MOVE HEADER");
+                        Log.d(TAG, "onDrawOver: STATE: MOVE HEADER");
                         Log.d(TAG, "onDrawOver: ASSIGNED STATE: SCROLL");
                     }
                 }
@@ -95,8 +95,6 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
                     int bottom = topChild.getBottom();
                     headerCover = getHeaderViewForItem2(topChildPosition, parent);
                     // currentHeader = getHeaderViewForItem(topChildPosition, parent);
-                    Log.d(TAG, "onDrawOver HIDING HEADER: headerViewPosition for topChild = " + mListener.getHeaderPositionForItem(topChildPosition));
-                    Log.d(TAG, "onDrawOver: HIDING HEADER: topChildPosition = " + topChildPosition);
                     fixLayoutSize2(parent, headerCover, bottom);
                     hideMovingHeader(c, headerCover, currentHeader);
                 } else {
@@ -216,8 +214,6 @@ public class StickyHeader extends RecyclerView.ItemDecoration {
          * @return int. Position of the header item in the adapter.
          */
         int getHeaderPositionForItem(int itemPosition);
-
-        void newMethod(View header);
 
         /**
          * This method gets called by {@link HeaderItemDecoration} to get layout resource id for the header item at specified adapter's position.

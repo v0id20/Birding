@@ -1,10 +1,10 @@
-package com.github.v0id20.birding.mylocation;
+package com.github.v0id20.birding.locationitem;
 
-public class MyLocation {
+public class LocationItem {
     private final String locationName;
     private final String locationCode;
 
-    public MyLocation(String locationName, String locationCode) {
+    public LocationItem(String locationName, String locationCode) {
         this.locationName = locationName;
         this.locationCode = locationCode;
     }

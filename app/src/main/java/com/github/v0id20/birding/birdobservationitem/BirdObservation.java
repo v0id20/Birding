@@ -1,4 +1,4 @@
-package com.github.v0id20.birding;
+package com.github.v0id20.birding.birdobservationitem;
 
 public class BirdObservation extends BirdObservationItem {
     public static final String COMMON_NAME_EXTRA = "Common name";
@@ -12,26 +12,32 @@ public class BirdObservation extends BirdObservationItem {
     public static final String OBSERVATION_DATE_EXTRA = "Observation date";
     public static final String OBSERVATION_TIME_EXTRA = "Observation time";
     public static final String HOW_MANY_EXTRA = "How many";
-    private String commonName;
-    private String scientificName;
-    private String countryName;
+    private final String commonName;
+    private final String scientificName;
+    private final String countryName;
     private String locationName;
     private String subnational1Name;
-    private String time;
-    private String latitude;
-    private String longitude;
-    private int howMany;
+    private final String time;
+    private final String latitude;
+    private final String longitude;
+    private final int howMany;
     private boolean locationDecoded;
 
-    public BirdObservation() {
+
+    public BirdObservation(String commonName, String sciName, String countryName, String locationName, String date, String time, String latitude, String longitude, int howMany) {
+        super(date);
+        this.commonName = commonName;
+        this.scientificName = sciName;
+        this.countryName = countryName;
+        this.locationName = locationName;
+        this.time = time;
+        this.howMany = howMany;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getTime() {
         return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     public String getLocationName() {
@@ -46,24 +52,12 @@ public class BirdObservation extends BirdObservationItem {
         return commonName;
     }
 
-    public void setCommonName(String commonName) {
-        this.commonName = commonName;
-    }
-
     public String getScientificName() {
         return scientificName;
     }
 
-    public void setScientificName(String scientificName) {
-        this.scientificName = scientificName;
-    }
-
     public String getCountryName() {
         return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
     }
 
     public String getSubnational1Name() {
@@ -74,24 +68,12 @@ public class BirdObservation extends BirdObservationItem {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
     public String getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
     public int getHowMany() {
         return howMany;
-    }
-
-    public void setHowMany(int howMany) {
-        this.howMany = howMany;
     }
 
     public boolean isLocationDecoded() {

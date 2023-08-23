@@ -1,4 +1,4 @@
-package com.github.v0id20.birding.viewobservationslist;
+package com.github.v0id20.birding.observationslist;
 
 import android.os.Bundle;
 
@@ -20,15 +20,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                ObservationsFragment fragmentRecentObservations = new ObservationsFragment();
+                ObservationsListFragment fragmentRecentObservations = new ObservationsListFragment();
                 Bundle bundleRecent = new Bundle(bundle);
-                bundleRecent.putString(ViewObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE, ViewObservationsListActivity.OBSERVATIONS_TYPE_RECENT);
+                bundleRecent.putString(ObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE, ObservationsListActivity.OBSERVATIONS_TYPE_RECENT);
                 fragmentRecentObservations.setArguments(bundleRecent);
                 return fragmentRecentObservations;
             default:
-                ObservationsFragment fragmentNotableObservations = new ObservationsFragment();
+                ObservationsListFragment fragmentNotableObservations = new ObservationsListFragment();
                 Bundle bundleNotable = new Bundle(bundle);
-                bundleNotable.putString(ViewObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE, ViewObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE);
+                bundleNotable.putString(ObservationsListActivity.FRAGMENT_OBSERVATIONS_TYPE, ObservationsListActivity.OBSERVATIONS_TYPE_NOTABLE);
                 fragmentNotableObservations.setArguments(bundleNotable);
                 return fragmentNotableObservations;
         }

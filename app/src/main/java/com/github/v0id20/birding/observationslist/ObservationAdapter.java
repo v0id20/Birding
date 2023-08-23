@@ -1,7 +1,6 @@
-package com.github.v0id20.birding.viewobservationslist;
+package com.github.v0id20.birding.observationslist;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +9,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.v0id20.birding.BirdObservation;
-import com.github.v0id20.birding.BirdObservationDate;
-import com.github.v0id20.birding.BirdObservationItem;
-import com.github.v0id20.birding.decoder.Decoder;
 import com.github.v0id20.birding.R;
-import com.github.v0id20.birding.StickyHeader;
+import com.github.v0id20.birding.birdobservationitem.BirdObservation;
+import com.github.v0id20.birding.birdobservationitem.BirdObservationDate;
+import com.github.v0id20.birding.birdobservationitem.BirdObservationItem;
+import com.github.v0id20.birding.decoder.Decoder;
 
 import java.util.ArrayList;
 
-public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeader.StickyHeaderInterface, ViewObservationsListModel.onLocationsDecodedListener {
+public class ObservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements StickyHeader.StickyHeaderInterface, Decoder.OnLocationsDecodedListener {
 
     private ArrayList<BirdObservationItem> birdObservationArrayList;
     private OnObservationClickListener onObservationClickListener;
@@ -28,7 +26,7 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
     public ObservationAdapter(ArrayList<BirdObservationItem> birdObservationArrayList, Decoder decoder) {
         this.birdObservationArrayList = birdObservationArrayList;
         this.decoder = decoder;
-        decoder.setOnLocationsDecodedListener(this);
+        decoder.setOnLocationsDecodedListener(ObservationAdapter.this);
     }
 
     public void setOnObservationClickListener(OnObservationClickListener onObservationClickListener) {
@@ -41,9 +39,9 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView;
+        //type - observation
         if (viewType == 1) {
             itemView = inflater.inflate(R.layout.item_obs, parent, false);
-
             ObservationAdapter.ObservationViewHolder viewHolder = new ObservationAdapter.ObservationViewHolder(itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -53,11 +51,10 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
                 }
             });
             return viewHolder;
-        } else if (viewType == 2) {
-            itemView = inflater.inflate(R.layout.item_obs_date, parent, false);
-            return new ObservationAdapter.DateObservationViewHolder(itemView);
+            //type - date
         } else {
-            return null;
+            itemView = inflater.inflate(R.layout.item_obs_date, parent, false);
+            return new DateObservationViewHolder(itemView);
         }
     }
 
@@ -65,14 +62,17 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == 1) {
             BirdObservation birdObservation = (BirdObservation) birdObservationArrayList.get(position);
-            ((ObservationAdapter.ObservationViewHolder) holder).timeTV.setText(birdObservation.getTime());
-            ((ObservationAdapter.ObservationViewHolder) holder).commonNameTV.setText(birdObservation.getCommonName());
-            ((ObservationAdapter.ObservationViewHolder) holder).sciNameTV.setText(birdObservation.getScientificName());
-            if (birdObservation.isLocationDecoded()) {
-                ((ObservationAdapter.ObservationViewHolder) holder).locationTV.setText(birdObservation.getLocationName());
-            } else {
-                ((ObservationAdapter.ObservationViewHolder) holder).locationTV.setText("");
-                decoder.decodeLocation(birdObservation, position);
+            if (holder instanceof ObservationAdapter.ObservationViewHolder) {
+                ObservationAdapter.ObservationViewHolder observationViewHolder = (ObservationAdapter.ObservationViewHolder) holder;
+                (observationViewHolder).timeTV.setText(birdObservation.getTime());
+                (observationViewHolder).commonNameTV.setText(birdObservation.getCommonName());
+                (observationViewHolder).sciNameTV.setText(birdObservation.getScientificName());
+                if (birdObservation.isLocationDecoded()) {
+                    (observationViewHolder).locationTV.setText(birdObservation.getLocationName());
+                } else {
+                    (observationViewHolder).locationTV.setText("");
+                    decoder.decodeLocation(birdObservation, position);
+                }
             }
         } else if (holder.getItemViewType() == 2) {
             BirdObservationDate birdObservationItem = (BirdObservationDate) birdObservationArrayList.get(position);
@@ -93,30 +93,24 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
     public int getItemViewType(int position) {
         if (birdObservationArrayList.get(position) instanceof BirdObservation) {
             return 1;
-        } else if (birdObservationArrayList.get(position) instanceof BirdObservationDate) {
+        } else {
             return 2;
         }
-        return super.getItemViewType(position);
     }
 
-    //determine index of BirdObservationDate in birdObservationArrayList for an item with given position
+    /**
+     * determine index of BirdObservationDate in birdObservationArrayList for an item with given position
+     */
     @Override
     public int getHeaderPositionForItem(int itemPosition) {
         int i = itemPosition;
         while (i > 0) {
             if (birdObservationArrayList.get(i) instanceof BirdObservationDate) {
-                Log.d("OBSERVATION ADAPTER", "getHeaderPositionForItem: " + birdObservationArrayList.get(i).getObservationDate());
                 return i;
             }
             i--;
         }
         return 0;
-    }
-
-    @Override
-    public void newMethod(View header) {
-        TextView dateTV = header.findViewById(R.id.obs_date);
-        dateTV.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -153,7 +147,7 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         }
     }
 
-    public class ObservationViewHolder extends RecyclerView.ViewHolder {
+    public static class ObservationViewHolder extends RecyclerView.ViewHolder {
         TextView commonNameTV;
         TextView sciNameTV;
         TextView locationTV;
@@ -168,7 +162,7 @@ public class ObservationAdapter<ObservationViewHolder> extends RecyclerView.Adap
         }
     }
 
-    public class DateObservationViewHolder extends RecyclerView.ViewHolder {
+    public static class DateObservationViewHolder extends RecyclerView.ViewHolder {
         TextView dateTV;
 
         public DateObservationViewHolder(@NonNull View itemView) {

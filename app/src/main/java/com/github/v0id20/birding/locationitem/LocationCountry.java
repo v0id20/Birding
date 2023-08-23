@@ -1,13 +1,10 @@
-package com.github.v0id20.birding.mylocation;
+package com.github.v0id20.birding.locationitem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class LocationCountry extends MyLocation {
-    public enum LoadingState {ERROR, SUCCESS, LOADING, VOID}
-
-    private LoadingState loadingState;
+public class LocationCountry extends LocationItem {
     private boolean expanded;
     private ArrayList<LocationRegion> subRegions = new ArrayList(Arrays.asList(new LocationRegion("All Regions", this.getLocationCode(), this)));
 
@@ -17,14 +14,6 @@ public class LocationCountry extends MyLocation {
 
     public LocationCountry(String location, String locationCode) {
         super(location, locationCode);
-    }
-
-    public void setLoadingState(LoadingState state) {
-        loadingState = state;
-    }
-
-    public LoadingState getLoadingState() {
-        return loadingState;
     }
 
     public boolean isExpanded() {

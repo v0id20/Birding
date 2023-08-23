@@ -30,11 +30,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".viewobservationslist.ViewObservationsListActivity"
+            android:name=".observationslist.ObservationsListActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ViewBirdObservationActivity"
+            android:name=".birdobservationinfo.BirdObservationInfoActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
 

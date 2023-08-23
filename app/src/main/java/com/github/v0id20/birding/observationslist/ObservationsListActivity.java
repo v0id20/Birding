@@ -1,4 +1,6 @@
-package com.github.v0id20.birding.viewobservationslist;
+package com.github.v0id20.birding.observationslist;
+
+import static java.util.Objects.requireNonNull;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,15 +11,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import com.github.v0id20.birding.BirdObservation;
+import com.github.v0id20.birding.birdobservationitem.BirdObservation;
 import com.github.v0id20.birding.R;
+import com.github.v0id20.birding.chooselocation.ChooseLocationActivity;
 import com.google.android.material.tabs.TabLayout;
 
 
-public class ViewObservationsListActivity extends AppCompatActivity {
+public class ObservationsListActivity extends AppCompatActivity {
     public static final String OBSERVATIONS_TYPE_RECENT = "recent";
     public static final String OBSERVATIONS_TYPE_NOTABLE = "notable";
     public static final String FRAGMENT_OBSERVATIONS_TYPE = "fragment";
+    public static final int INVALID_LATITUDE = -1000;
+    public static final int INVALID_LONGITUDE = -1000;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -27,15 +32,15 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_observations_list);
         Intent i = getIntent();
         String regionCode = i.getStringExtra(BirdObservation.REGION_CODE_EXTRA);
-        double currentLatitude = i.getDoubleExtra(BirdObservation.LATITUDE_EXTRA, -1000);
-        double currentLongitude = i.getDoubleExtra(BirdObservation.LONGITUDE_EXTRA, -1000);
+        double currentLatitude = i.getDoubleExtra(BirdObservation.LATITUDE_EXTRA, INVALID_LATITUDE);
+        double currentLongitude = i.getDoubleExtra(BirdObservation.LONGITUDE_EXTRA, INVALID_LONGITUDE);
         TextView header = findViewById(R.id.header);
         String countryName = null;
-        if (regionCode != null) {
+        if (!regionCode.equals(ChooseLocationActivity.REGION_CODE_NEARBY)) {
             String regionName = i.getStringExtra(BirdObservation.REGION_NAME_EXTRA);
             countryName = i.getStringExtra(BirdObservation.COUNTRY_NAME_EXTRA);
             header.setText(countryName + ", " + regionName);
-        } else if (currentLatitude != -1000 && currentLongitude != -1000) {
+        } else if (currentLatitude != INVALID_LATITUDE && currentLongitude != INVALID_LONGITUDE) {
             header.setText(getString(R.string.nearby));
         }
         Bundle locationData = new Bundle();
@@ -53,7 +58,6 @@ public class ViewObservationsListActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setCustomView(R.layout.tab_custom_selected);
         tabLayout.getTabAt(1).setCustomView(R.layout.tab_custom_unselected);
 
-
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), locationData);
         viewPager.setAdapter(adapter);
@@ -70,20 +74,18 @@ public class ViewObservationsListActivity extends AppCompatActivity {
 
         @Override
         public void onTabUnselected(TabLayout.Tab tab) {
-            float slideTo = 0;
-            float popolam = tabLayout.getWidth() / 2;
-
+            int mid = tabLayout.getWidth() / 2;
+            float slideTo = tabLayout.getTabAt(1).getCustomView().getLeft() + mid - tabLayout.getTabAt(0).getCustomView().getLeft();
             if (tab.getPosition() == 0) {
-                tab.view.setTranslationZ(6);
-                tabLayout.getTabAt(1).view.setTranslationZ(0);
-                slideTo = tabLayout.getTabAt(1).getCustomView().getLeft() + popolam - tabLayout.getTabAt(0).getCustomView().getLeft();
+                tab.view.setTranslationZ(3);
+                requireNonNull(tabLayout.getTabAt(1)).view.setTranslationZ(0);
             } else if (tab.getPosition() == 1) {
                 tab.view.setTranslationZ(3);
-                tabLayout.getTabAt(0).view.setTranslationZ(0);
-                slideTo = -(tabLayout.getTabAt(1).getCustomView().getLeft() + popolam - tabLayout.getTabAt(0).getCustomView().getLeft());
+                requireNonNull(tabLayout.getTabAt(0)).view.setTranslationZ(0);
+                slideTo = -slideTo;
             }
             TranslateAnimation translateAnimation = new TranslateAnimation(0, slideTo, 0, 0);
-            translateAnimation.setDuration(600);
+            translateAnimation.setDuration(200);
             MyAnimationListener myAnimationListener = new MyAnimationListener(tab, tab.getPosition());
             translateAnimation.setAnimationListener(myAnimationListener);
             tab.view.clearAnimation();
@@ -111,10 +113,11 @@ public class ViewObservationsListActivity extends AppCompatActivity {
             public void onAnimationEnd(Animation animation) {
                 if (selectedTabIndex == 0) {
                     tab.setCustomView(R.layout.tab_custom_unselected);
-                    tabLayout.getTabAt(1).setCustomView(R.layout.tab_custom_selected);
+                    requireNonNull(tabLayout.getTabAt(1)).setCustomView(R.layout.tab_custom_selected);
                 } else if (selectedTabIndex == 1) {
                     tab.setCustomView(R.layout.tab_custom_unselected);
-                    tabLayout.getTabAt(0).setCustomView(R.layout.tab_custom_selected);
+                    requireNonNull(tabLayout.getTabAt(0)).setCustomView(R.layout.tab_custom_selected);
+
                 }
             }
 
